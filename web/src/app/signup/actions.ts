@@ -6,7 +6,7 @@ export async function signUp(formData: FormData) {
   const email        = String(formData.get('email')        ?? '');
   const password     = String(formData.get('password')     ?? '');
   const display_name = String(formData.get('display_name') ?? '');
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.auth.signUp({
     email,
     password,

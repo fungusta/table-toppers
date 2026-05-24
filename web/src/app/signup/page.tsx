@@ -1,10 +1,11 @@
 import { signUp } from './actions';
 
-export default function SignUpPage({ searchParams }: { searchParams: { error?: string } }) {
+export default async function SignUpPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+  const sp = await searchParams;
   return (
     <main style={{ maxWidth: 360, margin: '4rem auto', fontFamily: 'system-ui' }}>
       <h1>Create account</h1>
-      {searchParams.error && <p style={{ color: 'crimson' }}>{searchParams.error}</p>}
+      {sp.error && <p style={{ color: 'crimson' }}>{sp.error}</p>}
       <form action={signUp}>
         <label style={{ display: 'block', marginBottom: 12 }}>
           Display name <input name="display_name" type="text" required style={{ width: '100%' }} />

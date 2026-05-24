@@ -1,92 +1,95 @@
-"use client";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { CafeViewClient } from "@/components/CafeViewClient";
+import type { GameId, Player, Range, RealGameId, Standing } from "@/data/data";
 
-import { useEffect, useState } from "react";
-import { CafeView } from "@/components/CafeView";
-import { CarcassonneView } from "@/components/CarcassonneView";
-import { CatanView } from "@/components/CatanView";
-import {
-  MatchHistoryModal,
-  PlayerProfileModal,
-  RecordMatchModal,
-  type NewMatch,
-} from "@/components/Modals";
-import { TopBar } from "@/components/TopBar";
-import { MATCHES, type GameId, type Match, type Range } from "@/data/data";
+type RpcRow = {
+  member_id: string;
+  display_name: string;
+  handle: string | null;
+  color: string;
+  initials: string;
+  wins: number;
+  played: number;
+  win_rate: number;
+  streak: number;
+  catan_wins: number;
+  carc_wins: number;
+  mono_wins: number;
+  catan_played: number;
+  carc_played: number;
+  mono_played: number;
+  fav_game: RealGameId;
+};
 
-const THEME_CLASSES = ["theme-cafe", "theme-catan", "theme-carcassonne", "theme-monopoly"];
-
-export default function HomePage() {
-  const [tab, setTab] = useState<GameId>("cafe");
-  const [range, setRange] = useState<Range>("all");
-  const [matches, setMatches] = useState<Match[]>(MATCHES);
-  const [profileId, setProfileId] = useState<string | null>(null);
-  const [recordOpen, setRecordOpen] = useState(false);
-  const [historyOpen, setHistoryOpen] = useState(false);
-
-  useEffect(() => {
-    document.body.classList.remove(...THEME_CLASSES);
-    document.body.classList.add(`theme-${tab}`);
-  }, [tab]);
-
-  function handleRecord(match: NewMatch) {
-    const nextId = Math.max(...matches.map(m => m.id)) + 1;
-    setMatches([{ ...match, id: nextId }, ...matches]);
-  }
-
-  const viewProps = {
-    matches,
-    range,
-    onPickPlayer: setProfileId,
-    onRecord: () => setRecordOpen(true),
-    onOpenHistory: () => setHistoryOpen(true),
+function toStanding(r: RpcRow): Standing {
+  return {
+    member_id: r.member_id,
+    player: {
+      id: r.member_id,
+      name: r.display_name,
+      handle: r.handle ?? "",
+      color: r.color,
+      initials: r.initials,
+      joined: "",
+    },
+    wins: r.wins,
+    played: r.played,
+    winRate: Number(r.win_rate),
+    streak: r.streak,
+    byGame:       { catan: r.catan_wins,   carcassonne: r.carc_wins,   monopoly: r.mono_wins   },
+    playedByGame: { catan: r.catan_played, carcassonne: r.carc_played, monopoly: r.mono_played },
+    fav: r.fav_game,
   };
+}
 
-  return (
-    <div className={`app app-theme-${tab}`} data-screen-label={`${tab} leaderboard`}>
-      <TopBar
-        tab={tab}
-        setTab={setTab}
-        range={range}
-        setRange={setRange}
-        onRecord={() => setRecordOpen(true)}
-        onHistory={() => setHistoryOpen(true)}
-      />
+const VALID_GAMES: GameId[] = ["cafe", "catan", "carcassonne", "monopoly"];
+const VALID_RANGES: Range[] = ["week", "month", "all"];
 
-      <main className="app-main">
-        {tab === "catan" ? (
-          <CatanView {...viewProps} />
-        ) : tab === "carcassonne" ? (
-          <CarcassonneView {...viewProps} />
-        ) : (
-          <CafeView {...viewProps} />
-        )}
-      </main>
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ game?: string; range?: string }>;
+}) {
+  const sp = await searchParams;
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/signin");
 
-      <PlayerProfileModal
-        playerId={profileId}
-        matches={matches}
-        onClose={() => setProfileId(null)}
-        theme={tab}
-        onPickPlayer={setProfileId}
-      />
-      <RecordMatchModal
-        open={recordOpen}
-        onClose={() => setRecordOpen(false)}
-        theme={tab}
-        defaultGame={tab}
-        onSubmit={handleRecord}
-      />
-      <MatchHistoryModal
-        open={historyOpen}
-        onClose={() => setHistoryOpen(false)}
-        theme={tab}
-        matches={matches}
-        currentGame={tab}
-        onPickPlayer={(id) => {
-          setHistoryOpen(false);
-          setProfileId(id);
-        }}
-      />
-    </div>
-  );
+  const { data: gm } = await supabase
+    .from("group_members")
+    .select("group_id")
+    .limit(1)
+    .single();
+  if (!gm) redirect("/signin");
+
+  const game: GameId =
+    (sp.game && (VALID_GAMES as string[]).includes(sp.game)
+      ? (sp.game as GameId)
+      : "cafe");
+  const range: Range =
+    (sp.range && (VALID_RANGES as string[]).includes(sp.range)
+      ? (sp.range as Range)
+      : "month");
+
+  const [{ data: rows, error }, { data: memberRows }] = await Promise.all([
+    supabase.rpc("get_standings", { p_group_id: gm.group_id, p_game: game, p_range: range }),
+    supabase
+      .from("members")
+      .select("id, display_name, handle, color, initials, joined_at")
+      .eq("group_id", gm.group_id),
+  ]);
+  if (error) throw error;
+
+  const standings: Standing[] = ((rows as RpcRow[] | null) ?? []).map(toStanding);
+  const members: Player[] = (memberRows ?? []).map(m => ({
+    id: m.id,
+    name: m.display_name,
+    handle: m.handle ?? "",
+    color: m.color,
+    initials: m.initials,
+    joined: m.joined_at,
+  }));
+
+  return <CafeViewClient standings={standings} members={members} game={game} range={range} />;
 }
