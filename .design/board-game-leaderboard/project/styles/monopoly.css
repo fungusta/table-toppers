@@ -1,0 +1,481 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   monopoly.css — Art-deco "Property Tycoon" theme.
+   Original visual language — NOT Hasbro Monopoly trade dress.
+   Palette: deep ink, brass, cream paper. Geometric art-deco rules and frames.
+   ────────────────────────────────────────────────────────────────────────── */
+
+body.theme-monopoly {
+  background: #efe8d8;
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0, transparent 39px, rgba(28, 20, 16, .03) 39px, rgba(28, 20, 16, .03) 40px);
+  color: #1c1410;
+  font-family: 'Playfair Display', 'Spectral', Georgia, serif;
+}
+
+.mono-root {
+  padding-top: 32px;
+  display: flex; flex-direction: column; gap: 56px;
+}
+
+/* ─── Header ────────────────────────────────────────────────────────────── */
+.mono-header {
+  text-align: center;
+  padding: 0 0 12px;
+}
+.mono-header-rule {
+  height: 6px;
+  background:
+    linear-gradient(to right, transparent 0%, #1c1410 5%, #1c1410 95%, transparent 100%);
+  border-radius: 1px;
+  margin: 0 auto;
+  max-width: 1100px;
+  position: relative;
+}
+.mono-header-rule + .mono-header-rule { margin-top: 20px; }
+.mono-header-rule::before,
+.mono-header-rule::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  width: 12px; height: 12px;
+  background: #1c1410;
+  transform: rotate(45deg);
+}
+.mono-header-rule::before { left: 18px; }
+.mono-header-rule::after { right: 18px; }
+
+.mono-header-inner {
+  padding: 36px 24px 32px;
+}
+.mono-header-eyebrow {
+  display: inline-flex; align-items: center; gap: 14px;
+  font-family: 'Cinzel', 'Playfair Display', serif;
+  font-size: 12px;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  color: #1c1410;
+  margin-bottom: 18px;
+}
+.mono-bull { color: #b8924d; }
+
+.mono-title {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px;
+  font-family: 'Playfair Display', 'Bodoni Moda', serif;
+  font-weight: 900;
+  margin: 0;
+  color: #1c1410;
+  line-height: .9;
+}
+.mono-title-line {
+  font-size: clamp(48px, 8vw, 96px);
+  letter-spacing: -.02em;
+  font-style: italic;
+}
+.mono-title-amp {
+  font-family: 'Bodoni Moda', 'Playfair Display', serif;
+  font-style: italic;
+  font-size: clamp(36px, 5vw, 60px);
+  color: #b8924d;
+  line-height: 1;
+  margin: -6px 0;
+}
+
+.mono-header-sub {
+  font-style: italic;
+  font-size: 18px;
+  color: #4a3d2e;
+  margin-top: 14px;
+  letter-spacing: .01em;
+}
+
+.mono-header-stats {
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 0;
+  max-width: 900px;
+  margin: 28px auto 0;
+  border-top: 1px solid #1c1410;
+  border-bottom: 1px solid #1c1410;
+  padding: 18px 0;
+}
+.mono-hstat {
+  flex: 1; min-width: 200px;
+  padding: 0 20px;
+  border-right: 1px solid rgba(28, 20, 16, .25);
+  text-align: center;
+}
+.mono-hstat:last-child { border-right: 0; }
+.mono-hstat-lbl {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: #4a3d2e;
+  margin-bottom: 4px;
+}
+.mono-hstat-val {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1c1410;
+}
+
+/* ─── Section heads ─────────────────────────────────────────────────────── */
+.mono-section-head {
+  display: flex; flex-direction: column; align-items: center;
+  margin-bottom: 28px;
+  text-align: center;
+  position: relative;
+}
+.mono-section-head .mono-link {
+  position: absolute; right: 0; bottom: 6px;
+}
+.mono-section-eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: .3em;
+  color: #b8924d;
+  margin-bottom: 4px;
+}
+.mono-section-head h2 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-style: italic;
+  font-size: 40px;
+  margin: 0;
+  color: #1c1410;
+  line-height: 1.05;
+}
+.mono-section-head p {
+  font-style: italic;
+  color: #4a3d2e;
+  margin: 4px 0 0;
+  font-size: 14px;
+}
+
+.mono-link {
+  background: transparent; border: 0;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: #b8924d;
+  font-weight: 600;
+}
+.mono-link:hover { text-decoration: underline; }
+
+/* ─── Title Deeds ───────────────────────────────────────────────────────── */
+.mono-deeds {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 18px;
+}
+.mono-deed {
+  background: #faf3e0;
+  border: 2px solid #1c1410;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: transform .15s, box-shadow .15s;
+  box-shadow:
+    0 2px 0 #1c1410,
+    0 10px 24px -8px rgba(0,0,0,.25);
+  display: flex; flex-direction: column;
+}
+.mono-deed:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 0 #1c1410, 0 14px 30px -8px rgba(0,0,0,.4);
+}
+.mono-deed-top { box-shadow: 0 2px 0 #1c1410, 0 0 0 3px #b8924d, 0 10px 24px -8px rgba(0,0,0,.25); }
+.mono-deed-top:hover { box-shadow: 0 4px 0 #1c1410, 0 0 0 3px #b8924d, 0 14px 30px -8px rgba(0,0,0,.4); }
+
+.mono-deed-color {
+  position: relative;
+  height: 64px;
+  border-bottom: 2px solid #1c1410;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.85);
+  text-shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+.mono-deed-color-stripe {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 6px;
+  background: repeating-linear-gradient(45deg, rgba(0,0,0,.3) 0 4px, transparent 4px 8px);
+}
+body.hide-avatars .mono-deed-color { height: 14px; }
+
+.mono-deed-body {
+  padding: 16px 16px 14px;
+  display: flex; flex-direction: column; gap: 6px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 19px, rgba(28, 20, 16, .025) 19px 20px);
+}
+.mono-deed-titleline {
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: .35em;
+  text-transform: uppercase;
+  color: #4a3d2e;
+}
+.mono-deed-name {
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 24px;
+  color: #1c1410;
+  line-height: 1.05;
+}
+.mono-deed-rank {
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: .15em;
+  color: #b8924d;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.mono-deed-rent {
+  border-top: 1px solid #1c1410;
+  border-bottom: 1px solid #1c1410;
+  padding: 8px 4px;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.mono-deed-rent-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-family: 'Playfair Display', serif;
+  font-size: 12px;
+  color: #4a3d2e;
+}
+.mono-deed-rent-row span:first-child {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.mono-deed-rent-row span:last-child {
+  font-variant-numeric: tabular-nums;
+}
+.mono-deed-rent-row-strong {
+  color: #1c1410;
+}
+.mono-deed-rent-row-strong span:first-child {
+  font-weight: 700;
+}
+.mono-deed-rent-row-strong span:last-child {
+  font-weight: 700; font-size: 14px;
+}
+.mono-deed-currency {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+}
+
+.mono-deed-houses {
+  display: flex; gap: 6px; justify-content: center;
+  padding: 8px 0 2px;
+}
+.mono-deed-house {
+  width: 18px; height: 14px; opacity: .25;
+}
+.mono-deed-house-on { opacity: 1; }
+.mono-deed-house svg { width: 100%; height: 100%; display: block; }
+
+.mono-deed-foot {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid #1c1410;
+  padding-top: 8px;
+  text-align: center;
+}
+.mono-deed-foot-stat span {
+  display: block;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 18px;
+  color: #1c1410;
+  line-height: 1;
+}
+.mono-deed-foot-stat i {
+  font-family: 'Cinzel', serif;
+  font-style: normal;
+  font-size: 9px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #4a3d2e;
+}
+
+/* ─── Big Board ─────────────────────────────────────────────────────────── */
+.mono-bigboard {
+  background: #1c1410;
+  color: #faf3e0;
+  padding: 24px;
+  border: 2px solid #1c1410;
+  box-shadow:
+    inset 0 0 0 4px #1c1410,
+    inset 0 0 0 5px #b8924d;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.mono-bb-row {
+  display: grid;
+  grid-template-columns: 40px 160px 1fr 80px 60px;
+  gap: 16px;
+  align-items: center;
+  padding: 10px 14px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background .15s;
+}
+.mono-bb-row + .mono-bb-row { border-top: 1px solid rgba(184, 146, 77, .15); }
+.mono-bb-row:hover { background: rgba(184, 146, 77, .06); }
+.mono-bb-rank {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  color: #b8924d;
+  letter-spacing: .08em;
+  font-variant-numeric: tabular-nums;
+}
+.mono-bb-name {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 20px;
+  font-weight: 600;
+  color: #faf3e0;
+}
+.mono-bb-track {
+  position: relative;
+  height: 12px;
+  background: rgba(250, 243, 224, .08);
+  border: 1px solid rgba(184, 146, 77, .25);
+}
+.mono-bb-fill {
+  height: 100%;
+  position: relative;
+  transition: width .5s ease;
+}
+.mono-bb-fill-shine {
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(45deg, rgba(255,255,255,.1) 0 3px, transparent 3px 8px);
+}
+.mono-bb-val {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: #faf3e0;
+  text-align: right;
+}
+.mono-bb-val span {
+  font-family: 'Cinzel', serif;
+  font-size: 11px; letter-spacing: .15em;
+  color: #b8924d;
+  margin-left: 4px;
+}
+.mono-bb-pct {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  color: #b8924d;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 720px) {
+  .mono-bb-row { grid-template-columns: 30px 1fr 60px; }
+  .mono-bb-track, .mono-bb-pct { display: none; }
+}
+
+/* ─── Ticker ────────────────────────────────────────────────────────────── */
+.mono-ticker {
+  background: #faf3e0;
+  border: 2px solid #1c1410;
+  padding: 0;
+  display: flex; flex-direction: column;
+}
+.mono-ticker-row {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  gap: 18px; align-items: center;
+  padding: 16px 20px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(28, 20, 16, .15);
+  transition: background .15s;
+}
+.mono-ticker-row:last-child { border-bottom: 0; }
+.mono-ticker-row:hover { background: rgba(184, 146, 77, .08); }
+.mono-ticker-stamp {
+  width: 64px; height: 64px;
+  border: 3px double #1c1410;
+  display: grid; place-items: center;
+  transform: rotate(-6deg);
+  position: relative;
+}
+.mono-ticker-stamp-line {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  letter-spacing: .15em;
+  color: #faf3e0;
+  text-shadow: 0 1px 2px rgba(0,0,0,.3);
+  font-weight: 700;
+}
+body.hide-avatars .mono-ticker-stamp { display: none; }
+body.hide-avatars .mono-ticker-row { grid-template-columns: 1fr auto; }
+
+.mono-ticker-title {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 18px;
+  color: #1c1410;
+}
+.mono-ticker-title strong {
+  font-weight: 800;
+  font-style: normal;
+  font-family: 'Cinzel', serif;
+  letter-spacing: .04em;
+  font-size: 17px;
+  margin-right: 4px;
+}
+.mono-ticker-sub {
+  font-style: italic;
+  font-size: 13px;
+  color: #4a3d2e;
+  margin-top: 4px;
+}
+.mono-ticker-date { text-align: right; }
+.mono-ticker-date-main {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 16px;
+  color: #1c1410;
+}
+.mono-ticker-date-sub {
+  font-family: 'Cinzel', serif;
+  font-size: 10px; letter-spacing: .1em;
+  color: #b8924d;
+}
+
+.mono-record-btn {
+  margin-top: 18px;
+  width: 100%;
+  background: #1c1410;
+  color: #b8924d;
+  border: 2px solid #1c1410;
+  padding: 16px;
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  transition: background .15s;
+}
+.mono-record-btn:hover { background: #2a1f15; color: #f4c563; }
+
+@media (max-width: 720px) {
+  .mono-deeds { grid-template-columns: 1fr 1fr; }
+  .mono-section-head h2 { font-size: 30px; }
+  .mono-title-line { font-size: 40px; }
+}

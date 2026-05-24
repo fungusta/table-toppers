@@ -1,0 +1,339 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   cafe.css — All-games overview ("The Cafe").
+   Warm parchment palette, no hero header. Content-first layout.
+   ────────────────────────────────────────────────────────────────────────── */
+
+body.theme-cafe {
+  background:
+    radial-gradient(ellipse at top, #f7efdd 0%, #ede1c5 60%, #d8c499 100%);
+  background-attachment: fixed;
+  color: #2a241c;
+  font-family: 'Spectral', 'IBM Plex Serif', Georgia, serif;
+}
+
+.caf-root {
+  padding-top: 28px;
+  display: flex; flex-direction: column; gap: 40px;
+}
+
+/* ─── Section heads (compact, left-aligned — replaces the old hero) ──── */
+.caf-section-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+  border-bottom: 1px solid rgba(60, 40, 20, .18);
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+}
+.caf-section-head h2 {
+  margin: 0;
+  font-family: 'Fraunces', 'Spectral', serif;
+  font-weight: 500;
+  font-size: 28px;
+  letter-spacing: .005em;
+  color: #2a1f15;
+}
+.caf-section-head .caf-eyebrow {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+  color: #8a6a2e;
+}
+.caf-section-head p {
+  margin: 0; color: #5c4329; font-style: italic; font-size: 14px;
+}
+.caf-section-head .caf-link {
+  background: transparent; border: 0;
+  color: #9c4b34; font-style: italic; font-size: 14px;
+  font-family: 'Fraunces', serif;
+}
+.caf-section-head .caf-link:hover { text-decoration: underline; }
+
+/* ─── Game champions strip (3 cards, one per game) ────────────────────── */
+.caf-champs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+.caf-champ {
+  position: relative;
+  background: #fbf3df;
+  border: 1px solid #5c4329;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex; align-items: center; gap: 16px;
+  box-shadow: 0 3px 0 #5c4329, 0 10px 22px -8px rgba(60,40,20,.25);
+  text-align: left;
+  cursor: pointer;
+  transition: transform .15s, box-shadow .15s;
+  font-family: 'Fraunces', serif;
+}
+.caf-champ:hover { transform: translateY(-2px); box-shadow: 0 5px 0 #5c4329, 0 14px 26px -8px rgba(60,40,20,.35); }
+.caf-champ-glyph {
+  width: 52px; height: 52px;
+  border-radius: 8px;
+  display: grid; place-items: center;
+  background: #2a1f15; color: #f4e6c8;
+  flex: 0 0 auto;
+}
+.caf-champ-body { flex: 1 1 auto; min-width: 0; }
+.caf-champ-game {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+  color: #8a6a2e;
+}
+.caf-champ-name {
+  font-size: 22px;
+  color: #2a1f15;
+  line-height: 1.1;
+  margin-top: 2px;
+}
+.caf-champ-wins {
+  font-size: 13px; font-style: italic; color: #5c4329;
+  margin-top: 2px;
+}
+.caf-champ-portrait {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  color: #f4e6c8;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 14px; font-weight: 700;
+  border: 2px solid #2a1f15;
+  flex: 0 0 auto;
+  text-shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+body.hide-avatars .caf-champ-portrait { display: none; }
+@media (max-width: 900px) { .caf-champs { grid-template-columns: 1fr; } }
+
+/* ─── League table — full standings across all games ─────────────────── */
+.caf-table-wrap {
+  background: #fbf3df;
+  border: 1px solid #5c4329;
+  border-radius: 10px;
+  box-shadow: 0 3px 0 #5c4329;
+  overflow: hidden;
+}
+.caf-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Spectral', serif;
+}
+.caf-table thead th {
+  text-align: left;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+  color: #8a6a2e;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(60, 40, 20, .25);
+  background: #f4e6c8;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.caf-table thead th.num { text-align: right; }
+.caf-table tbody tr {
+  border-bottom: 1px dashed rgba(60, 40, 20, .18);
+  cursor: pointer;
+  transition: background .12s;
+}
+.caf-table tbody tr:hover { background: rgba(156, 75, 52, .06); }
+.caf-table tbody tr:last-child { border-bottom: 0; }
+.caf-table td {
+  padding: 14px 16px;
+  vertical-align: middle;
+  color: #2a1f15;
+}
+.caf-table td.num {
+  text-align: right;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  color: #5c4329;
+}
+.caf-rank {
+  width: 36px;
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  color: #9c4b34;
+  font-weight: 600;
+}
+.caf-rank-1 { color: #9c4b34; }
+.caf-player {
+  display: flex; align-items: center; gap: 12px;
+}
+.caf-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  color: #f4e6c8;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px; font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0,0,0,.4);
+  flex: 0 0 auto;
+}
+body.hide-avatars .caf-avatar { display: none; }
+.caf-player-text { display: flex; flex-direction: column; line-height: 1.1; }
+.caf-player-name {
+  font-family: 'Fraunces', serif;
+  font-size: 17px;
+  color: #2a1f15;
+}
+.caf-player-handle {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; color: #8a6a2e;
+  margin-top: 2px;
+}
+
+/* Per-game pip cluster */
+.caf-pips {
+  display: inline-flex; gap: 8px; align-items: center;
+}
+.caf-pip {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: #5c4329;
+}
+.caf-pip-dot {
+  width: 8px; height: 8px;
+  border-radius: 2px;
+  background: var(--c, #9c4b34);
+  display: inline-block;
+}
+.caf-pip-dot.catan       { background: #9c4b34; }
+.caf-pip-dot.carcassonne { background: #5b7a4a; }
+.caf-pip-dot.monopoly    { background: #2a6f56; }
+
+.caf-streak {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: #5c4329;
+}
+.caf-streak-hot { color: #9c4b34; font-weight: 700; }
+body.hide-streak .caf-col-streak { display: none; }
+
+/* Mini bar showing win-rate */
+.caf-bar {
+  display: inline-block;
+  width: 120px; height: 6px;
+  background: rgba(60, 40, 20, .14);
+  border-radius: 3px;
+  position: relative;
+  overflow: hidden;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+.caf-bar-fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: linear-gradient(90deg, #d49538, #9c4b34);
+  border-radius: 3px;
+}
+
+/* ─── Recent matches list ─────────────────────────────────────────────── */
+.caf-recent {
+  background: #fbf3df;
+  border: 1px solid #5c4329;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex; flex-direction: column;
+  box-shadow: 0 3px 0 #5c4329;
+}
+.caf-recent-row {
+  display: grid;
+  grid-template-columns: 56px 1fr auto auto;
+  gap: 16px; align-items: center;
+  padding: 14px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background .12s;
+}
+.caf-recent-row:hover { background: rgba(156, 75, 52, .06); }
+.caf-recent-row + .caf-recent-row { border-top: 1px dashed rgba(60,40,20,.18); }
+.caf-recent-avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  color: #f4e6c8;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px; font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+body.hide-avatars .caf-recent-avatar { display: none; }
+body.hide-avatars .caf-recent-row { grid-template-columns: 1fr auto auto; }
+.caf-recent-title {
+  font-family: 'Fraunces', serif;
+  font-size: 16px;
+  color: #2a1f15;
+  line-height: 1.2;
+}
+.caf-recent-sub {
+  font-size: 12px;
+  font-style: italic;
+  color: #5c4329;
+  margin-top: 3px;
+}
+.caf-recent-game {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: #fbf3df;
+  white-space: nowrap;
+}
+.caf-recent-game.catan       { background: #9c4b34; }
+.caf-recent-game.carcassonne { background: #5b7a4a; }
+.caf-recent-game.monopoly    { background: #2a6f56; }
+.caf-recent-date {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; color: #8a6a2e;
+  white-space: nowrap;
+}
+
+.caf-record-btn {
+  margin-top: 16px;
+  width: 100%;
+  background: #2a1f15; color: #f4e6c8;
+  border: 1px solid #5c4329;
+  padding: 14px 16px; border-radius: 6px;
+  font-family: 'Fraunces', serif;
+  font-size: 16px;
+  letter-spacing: .02em;
+  box-shadow: 0 3px 0 #5c4329;
+  transition: transform .12s, box-shadow .12s;
+}
+.caf-record-btn:hover { background: #3a2a1c; }
+.caf-record-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #5c4329; }
+
+/* ─── At-a-glance stats strip ─────────────────────────────────────────── */
+.caf-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+.caf-stat {
+  background: #fbf3df;
+  border: 1px solid #5c4329;
+  border-radius: 8px;
+  padding: 16px 18px;
+  box-shadow: 0 2px 0 #5c4329;
+}
+.caf-stat-lbl {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+  color: #8a6a2e;
+}
+.caf-stat-val {
+  font-family: 'Fraunces', serif;
+  font-size: 26px;
+  color: #2a1f15;
+  margin-top: 4px;
+  line-height: 1.1;
+}
+.caf-stat-sub {
+  font-size: 12px; font-style: italic; color: #5c4329; margin-top: 2px;
+}
+@media (max-width: 720px) { .caf-stats { grid-template-columns: repeat(2, 1fr); } }
+
+/* Hide per-game pip columns on narrow screens */
+@media (max-width: 820px) {
+  .caf-col-pips, th.caf-col-pips { display: none; }
+  .caf-table td.num.caf-col-wr { display: none; }
+  .caf-table th.num.caf-col-wr { display: none; }
+}
