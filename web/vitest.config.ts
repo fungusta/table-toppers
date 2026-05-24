@@ -3,6 +3,8 @@ import { config } from 'dotenv';
 
 config({ path: '.env.test' });
 
+// Tests touch the Supabase DB via shared global state (db reset, ephemeral users).
+// Serialize execution so files don't trample each other.
 export default defineConfig({
   test: {
     environment: 'node',
@@ -11,6 +13,8 @@ export default defineConfig({
     hookTimeout: 120_000,
     pool: 'forks',
     fileParallelism: false,
-    poolOptions: { forks: { singleFork: true } },
-  },
+    poolOptions: {
+      forks: { singleFork: true },
+    },
+  } as any,
 });
