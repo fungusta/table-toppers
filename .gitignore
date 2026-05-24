@@ -6,3 +6,7 @@ supabase/.branches/
 web/.env.local
 web/.env.test
 web/.env*.local
+
+# Playwright artifacts
+web/test-results/
+web/playwright-report/
