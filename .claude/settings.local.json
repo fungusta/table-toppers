@@ -10,7 +10,30 @@
       "Bash(supabase --version)",
       "Bash(git init *)",
       "Bash(git add *)",
-      "Bash(git -c user.email=local@table-topper -c user.name=\"Local\" commit -m \"chore: snapshot before supabase slice\")"
+      "Bash(git -c user.email=local@table-topper -c user.name=\"Local\" commit -m \"chore: snapshot before supabase slice\")",
+      "Bash(git checkout *)",
+      "Bash(supabase init *)",
+      "Bash(supabase start *)",
+      "Bash(supabase status *)",
+      "Bash(git -c user.email=local@table-topper -c user.name=\"Local\" commit -m \"chore\\(supabase\\): init local stack\")",
+      "Bash(git -c user.email=local@table-topper -c user.name=\"Local\" commit -m \"chore\\(web\\): document supabase env vars\")",
+      "Bash(supabase db *)",
+      "Bash(PGPASSWORD=postgres psql -h 127.0.0.1 -p 54322 -U postgres -d postgres -c \"\\\\dt public.*\")",
+      "Bash(git -c user.email=local@table-topper -c user.name=\"Local\" commit -m \"feat\\(db\\): init schema with rls\")",
+      "Bash(node scripts/gen_match_seed.mjs)",
+      "Read(//tmp/**)",
+      "Bash(git -c user.email=local@table-topper -c user.name=\"Local\" commit -m \"feat\\(db\\): seed sunday strategists\")",
+      "Bash(git -c user.email=local@table-topper -c user.name=\"Local\" commit -m \"test\\(rpc\\): add deterministic fixture and expectations derivation\")",
+      "Bash(npm install *)",
+      "Bash(npm test *)",
+      "Bash(git -c user.email=local@table-topper -c user.name=\"Local\" commit -m \"feat\\(db\\): auto-join new signups to seed group\")",
+      "Bash(git -c user.email=local@table-topper -c user.name=\"Local\" commit -m \"feat\\(web\\): auth middleware gating /\")",
+      "Bash(git -c user.email=local@table-topper -c user.name=\"Local\" commit -m \"feat\\(web\\): signin page\")",
+      "Bash(git -c user.email=local@table-topper -c user.name=\"Local\" commit -m \"feat\\(web\\): signup page\")",
+      "Bash(git -c user.email=local@table-topper -c user.name=\"Local\" commit -m \"feat\\(web\\): signout route\")",
+      "Bash(git -c user.email=local@table-topper -c user.name=\"Local\" commit -m \"refactor\\(web\\): slim data.ts to types + formatters\")",
+      "Bash(git rm *)",
+      "Bash(git -c user.email=local@table-topper -c user.name=\"Local\" commit -m \"refactor\\(web\\): replace CafeView with CafeViewClient props-driven; drop unused legacy components\")"
     ]
   }
 }

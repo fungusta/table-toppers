@@ -1,57 +1,9 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { CafeViewClient } from "@/components/CafeViewClient";
-import type { GameId, Player, Range, RealGameId, Standing } from "@/data/data";
+import { HomeClient } from "@/components/HomeClient";
+import type { Match, Player, RealGameId } from "@/data/data";
 
-type RpcRow = {
-  member_id: string;
-  display_name: string;
-  handle: string | null;
-  color: string;
-  initials: string;
-  wins: number;
-  played: number;
-  win_rate: number;
-  streak: number;
-  catan_wins: number;
-  carc_wins: number;
-  mono_wins: number;
-  catan_played: number;
-  carc_played: number;
-  mono_played: number;
-  fav_game: RealGameId;
-};
-
-function toStanding(r: RpcRow): Standing {
-  return {
-    member_id: r.member_id,
-    player: {
-      id: r.member_id,
-      name: r.display_name,
-      handle: r.handle ?? "",
-      color: r.color,
-      initials: r.initials,
-      joined: "",
-    },
-    wins: r.wins,
-    played: r.played,
-    winRate: Number(r.win_rate),
-    streak: r.streak,
-    byGame:       { catan: r.catan_wins,   carcassonne: r.carc_wins,   monopoly: r.mono_wins   },
-    playedByGame: { catan: r.catan_played, carcassonne: r.carc_played, monopoly: r.mono_played },
-    fav: r.fav_game,
-  };
-}
-
-const VALID_GAMES: GameId[] = ["cafe", "catan", "carcassonne", "monopoly"];
-const VALID_RANGES: Range[] = ["week", "month", "all"];
-
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: Promise<{ game?: string; range?: string }>;
-}) {
-  const sp = await searchParams;
+export default async function Home() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/signin");
@@ -63,26 +15,24 @@ export default async function Home({
     .single();
   if (!gm) redirect("/signin");
 
-  const game: GameId =
-    (sp.game && (VALID_GAMES as string[]).includes(sp.game)
-      ? (sp.game as GameId)
-      : "cafe");
-  const range: Range =
-    (sp.range && (VALID_RANGES as string[]).includes(sp.range)
-      ? (sp.range as Range)
-      : "month");
+  const [{ data: memberRows }, { data: matchRows }, { data: matchPlayerRows }] =
+    await Promise.all([
+      supabase
+        .from("members")
+        .select("id, display_name, handle, color, initials, joined_at")
+        .eq("group_id", gm.group_id),
+      supabase
+        .from("matches")
+        .select("id, game_id, played_on, winner_member_id")
+        .eq("group_id", gm.group_id)
+        .order("played_on", { ascending: false }),
+      supabase
+        .from("match_players")
+        .select("match_id, member_id, matches!inner(group_id)")
+        .eq("matches.group_id", gm.group_id),
+    ]);
 
-  const [{ data: rows, error }, { data: memberRows }] = await Promise.all([
-    supabase.rpc("get_standings", { p_group_id: gm.group_id, p_game: game, p_range: range }),
-    supabase
-      .from("members")
-      .select("id, display_name, handle, color, initials, joined_at")
-      .eq("group_id", gm.group_id),
-  ]);
-  if (error) throw error;
-
-  const standings: Standing[] = ((rows as RpcRow[] | null) ?? []).map(toStanding);
-  const members: Player[] = (memberRows ?? []).map(m => ({
+  const players: Player[] = (memberRows ?? []).map(m => ({
     id: m.id,
     name: m.display_name,
     handle: m.handle ?? "",
@@ -91,5 +41,20 @@ export default async function Home({
     joined: m.joined_at,
   }));
 
-  return <CafeViewClient standings={standings} members={members} game={game} range={range} />;
+  const participantsByMatch = new Map<string, string[]>();
+  for (const row of matchPlayerRows ?? []) {
+    const arr = participantsByMatch.get(row.match_id) ?? [];
+    arr.push(row.member_id);
+    participantsByMatch.set(row.match_id, arr);
+  }
+
+  const matches: Match[] = (matchRows ?? []).map(m => ({
+    id: m.id,
+    game: m.game_id as RealGameId,
+    date: m.played_on,
+    players: participantsByMatch.get(m.id) ?? [],
+    winner: m.winner_member_id ?? "",
+  }));
+
+  return <HomeClient players={players} initialMatches={matches} />;
 }
