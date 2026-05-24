@@ -4,6 +4,9 @@ import { createClient } from '@supabase/supabase-js';
 import { execSync } from 'node:child_process';
 import path from 'node:path';
 import { readFileSync } from 'node:fs';
+import { config as loadEnv } from 'dotenv';
+
+loadEnv({ path: path.resolve(__dirname, '../../.env.test') });
 
 const URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SVC = process.env.SUPABASE_SERVICE_ROLE_KEY!;
