@@ -1,0 +1,8 @@
+# Supabase
+supabase/.temp/
+supabase/.branches/
+
+# Next.js env files
+web/.env.local
+web/.env.test
+web/.env*.local
