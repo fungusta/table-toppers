@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project status
 
-`web/` is scaffolded (Next.js 15 App Router, React 18, TypeScript, plain CSS under `src/styles/`). No Supabase project, no `ios/`, no tests, no lint config beyond `next lint` defaults. The "planned architecture" below is still aspirational — verify before assuming any Supabase table, RLS policy, or iOS file exists.
+`web/` (Next.js 15 App Router, React 18, TypeScript) runs against a local Supabase stack (`supabase/` migrations + seed) with email/password auth and a single read-only leaderboard at `/` wired to live data via the `get_standings` Postgres RPC. RLS gates all reads off `group_members`. Tests live under `web/tests/` via Vitest (unit + RPC + RLS integration) and Playwright (signup→leaderboard e2e). No `ios/` yet. Lint config is still `next lint` defaults.
+
+The slice deliberately omits write paths (recording matches), per-game curated pages, invites, and multi-group UI — these are future specs. See `docs/superpowers/specs/2026-05-24-supabase-vertical-slice-design.md` for what was built and why.
 
 React is pinned to 18 (not 19) deliberately; do not upgrade without a reason.
 
@@ -59,24 +61,43 @@ Two clients, one backend. Both clients talk directly to Supabase; server-side lo
 
 Actual:
 - `web/` — Next.js 15 App Router, React 18, TypeScript
-  - `src/app/` — routes (`layout.tsx`, `page.tsx`)
-  - `src/components/` — React components (currently `CafeView`, `Modals`, `TopBar`)
-  - `src/data/` — in-memory mock data (`data.ts`) until Supabase lands
-  - `src/styles/` — plain CSS (`base.css`, `cafe.css`, `modals.css`); no Tailwind yet despite the architecture diagram
+  - `src/app/` — routes: `layout.tsx`, `page.tsx` (server-rendered leaderboard), `signin/`, `signup/`, `auth/signout/`
+  - `src/components/CafeViewClient.tsx` — the only React component in the slice; receives `standings` + `members` via props
+  - `src/data/data.ts` — types and pure formatters only (mock constants + standings logic moved to Supabase)
+  - `src/lib/supabase/{server,client,middleware}.ts` — `@supabase/ssr` factories; `database.types.ts` is generated
+  - `middleware.ts` — refreshes Supabase session cookie and gates `/`
+  - `src/styles/` — plain CSS (`base.css`, `cafe.css`); legacy `modals.css`/`carcassonne.css`/`catan.css` survive for future revival
+  - `tests/{unit,rpc,rls,e2e}/` — Vitest + Playwright suites
+- `supabase/` — Supabase CLI workspace
+  - `migrations/0001_init.sql` (schema + RLS), `0002_get_standings.sql` (RPC), `0003_handle_new_user.sql` (signup trigger)
+  - `seed.sql` — "The Sunday Strategists" + 8 members + 51 matches
+  - `tests/seed_known.sql` — deterministic fixture loaded by RPC tests
+  - `config.toml` — local-dev config (email confirmation disabled)
+- `scripts/gen_match_seed.mjs` — generator that translates `data.ts` MATCHES into seed SQL
+- `docs/superpowers/{specs,plans}/` — design spec + implementation plan for the slice
 - `.design/board-game-leaderboard/` — design handoff bundle (see above)
+
+Legacy components (`CatanView`, `CarcassonneView`, `Modals`, `TopBar`) were removed during the slice because they consumed mock data that no longer exists. They live in git history (`git log --all -- web/src/components/`) and as prototypes in `.design/board-game-leaderboard/project/` — revive in future specs.
 
 Planned but not yet present:
 - `ios/` — SwiftUI Xcode project
-- `supabase/` — migrations, RLS policies, Edge Function source, seed data (managed via Supabase CLI)
 
 ## Commands
 
-From `web/`:
+From repo root (require Docker Desktop running):
+- `supabase start` — boot local Postgres + Auth + Studio
+- `supabase db reset` — re-apply migrations + seed
+- `supabase status -o env` — print API URL, anon key, service-role key for `web/.env.local`/`.env.test`
+
+From `web/` (require `supabase start` running and `.env.local` populated):
 - `npm run dev` — Next dev server
 - `npm run build` — production build
 - `npm run lint` — `next lint`
 - `npm start` — serve the built app
+- `npm run test` — Vitest (unit + RPC + RLS integration). Tests reset and re-seed the DB; do not run concurrently with `dev`.
+- `npm run test:e2e` — Playwright signup→leaderboard smoke
+- `npm run db:types` — regenerate `src/lib/supabase/database.types.ts` after schema changes
 
-No test runner is configured yet. No Supabase CLI config exists yet. iOS surface doesn't exist.
+iOS surface doesn't exist yet.
 
-Update this section the moment new scripts (tests, Supabase, iOS build) land — don't let it drift.
+Update this section the moment new scripts (writes, iOS build) land — don't let it drift.
