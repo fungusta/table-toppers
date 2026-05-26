@@ -380,6 +380,44 @@ body.hide-avatars .ctn-recent-row { grid-template-columns: 1fr auto; }
 .ctn-recent-section .ctn-section-head h2::before,
 .ctn-recent-section .ctn-section-head h2::after { display: none; }
 
+/* ─── Recent (empty) ────────────────────────────────────────────────────── */
+.ctn-recent-empty {
+  align-items: center;
+  text-align: center;
+  padding: 36px 24px;
+  gap: 6px;
+}
+.ctn-recent-empty-title {
+  font-family: 'IM Fell English', serif;
+  font-size: 20px;
+  color: #3a2a1c;
+}
+.ctn-recent-empty-sub {
+  font-family: 'IM Fell English', serif;
+  font-size: 14px;
+  font-style: italic;
+  color: #5c4329;
+  max-width: 380px;
+  margin: 0 auto 14px;
+  line-height: 1.4;
+}
+.ctn-recent-empty-btn {
+  background: #9c4b34; color: #f4e6c8;
+  border: 2px solid #5c4329;
+  padding: 12px 24px; border-radius: 6px;
+  font-family: 'IM Fell English', serif;
+  font-size: 16px;
+  letter-spacing: .03em;
+  box-shadow: 0 3px 0 #5c4329;
+  cursor: pointer;
+  transition: transform .12s, box-shadow .12s, background .12s;
+}
+.ctn-recent-empty-btn:hover { background: #b25a3f; }
+.ctn-recent-empty-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #5c4329;
+}
+
 @media (max-width: 720px) {
   .ctn-header { padding: 36px 24px 32px; }
   .ctn-section-head h2 { font-size: 30px; }

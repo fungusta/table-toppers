@@ -300,6 +300,29 @@ body.hide-streak .carc-table th:nth-child(5), body.hide-streak .carc-table td:nt
   color: #8a6a2e;
 }
 
+/* ─── Recent (empty) ────────────────────────────────────────────────────── */
+.carc-recent-empty {
+  align-items: center;
+  text-align: center;
+  padding: 36px 24px;
+  gap: 6px;
+}
+.carc-recent-empty-title {
+  font-family: 'Cinzel', serif;
+  font-size: 18px;
+  letter-spacing: .04em;
+  color: #3a2a1c;
+}
+.carc-recent-empty-sub {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-style: italic;
+  color: #5c4329;
+  max-width: 420px;
+  margin: 8px auto 0;
+  line-height: 1.5;
+}
+
 /* ─── Actions ───────────────────────────────────────────────────────────── */
 .carc-actions {
   display: flex; gap: 14px; justify-content: center;

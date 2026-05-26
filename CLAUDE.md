@@ -71,7 +71,7 @@ Actual:
   - `src/styles/` — plain CSS (`base.css`, `cafe.css`, `catan.css`, `carcassonne.css`, `modals.css`)
   - `tests/{unit,rpc,rls,e2e}/` — Vitest + Playwright suites
 - `supabase/` — Supabase CLI workspace
-  - `migrations/0001_init.sql` (schema + RLS), `0002_get_standings.sql` (RPC), `0003_handle_new_user.sql` (signup trigger), `0004_match_writes.sql` (record_match RPC + insert RLS), `0005_get_standings_anchor.sql` (data-driven date anchor), `0006_groups_invites.sql` (invites table + create_group / create_invite / peek_invite / accept_invite RPCs), `0007_get_player_profile.sql` (player profile RPC)
+  - `migrations/0001_init.sql` (schema + RLS), `0002_get_standings.sql` (RPC), `0003_handle_new_user.sql` (legacy signup trigger; dropped in 0008), `0004_match_writes.sql` (record_match RPC + insert RLS), `0005_get_standings_anchor.sql` (data-driven date anchor), `0006_groups_invites.sql` (invites table + create_group / create_invite / peek_invite / accept_invite RPCs), `0007_get_player_profile.sql` (player profile RPC), `0008_drop_seed_group_auto_join.sql` (drops the seed-group auto-join trigger so new sign-ups land in zero groups)
   - `seed.sql` — "The Sunday Strategists" + 8 members + 51 matches
   - `tests/seed_known.sql` — deterministic fixture loaded by RPC tests
   - `config.toml` — local-dev config (email confirmation disabled)

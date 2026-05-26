@@ -66,25 +66,39 @@ export function CatanView({ players, matches, range, onPickPlayer, onRecord, onO
           <h2>Recent Voyages</h2>
           <button className="ctn-link" onClick={onOpenHistory}>Open full chronicle →</button>
         </div>
-        <ul className="ctn-recent">
-          {recent.map(m => {
-            const w = playerById(players, m.winner);
-            return (
-              <li key={m.id} className="ctn-recent-row" onClick={() => onPickPlayer(w.id)}>
-                <div className="ctn-recent-body">
-                  <div className="ctn-recent-title"><strong>{w.name}</strong> claimed the longest road</div>
-                  <div className="ctn-recent-sub">
-                    vs {m.players.filter(p => p !== m.winner).map(p => playerById(players, p).name).join(" · ")}
-                  </div>
-                </div>
-                <div className="ctn-recent-date">{relTime(m.date)}</div>
-              </li>
-            );
-          })}
-        </ul>
-        <button className="ctn-record-btn" onClick={onRecord}>
-          ⬡ Record a Catan match
-        </button>
+        {recent.length === 0 ? (
+          <div className="ctn-recent ctn-recent-empty">
+            <div className="ctn-recent-empty-title">No voyages yet</div>
+            <div className="ctn-recent-empty-sub">
+              Set sail with your first Catan match to begin the chronicle.
+            </div>
+            <button className="ctn-recent-empty-btn" onClick={onRecord}>
+              ⬡ Record a Catan match
+            </button>
+          </div>
+        ) : (
+          <>
+            <ul className="ctn-recent">
+              {recent.map(m => {
+                const w = playerById(players, m.winner);
+                return (
+                  <li key={m.id} className="ctn-recent-row" onClick={() => onPickPlayer(w.id)}>
+                    <div className="ctn-recent-body">
+                      <div className="ctn-recent-title"><strong>{w.name}</strong> claimed the longest road</div>
+                      <div className="ctn-recent-sub">
+                        vs {m.players.filter(p => p !== m.winner).map(p => playerById(players, p).name).join(" · ")}
+                      </div>
+                    </div>
+                    <div className="ctn-recent-date">{relTime(m.date)}</div>
+                  </li>
+                );
+              })}
+            </ul>
+            <button className="ctn-record-btn" onClick={onRecord}>
+              ⬡ Record a Catan match
+            </button>
+          </>
+        )}
       </section>
     </div>
   );

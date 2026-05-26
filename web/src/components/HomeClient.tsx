@@ -15,7 +15,7 @@ import type { GameId, Match, Player, PlayerProfilePayload, Range } from "@/data/
 import { recordMatch } from "@/app/actions/record-match";
 import { createClient } from "@/lib/supabase/client";
 
-const THEME_CLASSES = ["theme-cafe", "theme-catan", "theme-carcassonne", "theme-monopoly"];
+const THEME_CLASSES = ["theme-cafe", "theme-catan", "theme-carcassonne"];
 
 interface HomeClientProps {
   groupId: string;

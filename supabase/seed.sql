@@ -3,8 +3,7 @@
 -- games
 insert into public.games (id, label, short) values
   ('catan',       'Catan',       'Catan'),
-  ('carcassonne', 'Carcassonne', 'Carc.'),
-  ('monopoly',    'Monopoly',    'Mono.');
+  ('carcassonne', 'Carcassonne', 'Carc.');
 
 -- seed group
 insert into public.groups (id, name) values
@@ -30,11 +29,6 @@ insert into public.matches (id, group_id, game_id, played_on, winner_member_id) 
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000050','22222222-0000-0000-0000-000000000006');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000050','22222222-0000-0000-0000-000000000007');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000050','22222222-0000-0000-0000-000000000008');
-insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000049','11111111-1111-1111-1111-111111111111','monopoly','2026-05-19','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000049','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000049','22222222-0000-0000-0000-000000000005');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000049','22222222-0000-0000-0000-000000000004');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000049','22222222-0000-0000-0000-000000000008');
 insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000048','11111111-1111-1111-1111-111111111111','catan','2026-05-17','22222222-0000-0000-0000-000000000002');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000048','22222222-0000-0000-0000-000000000002');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000048','22222222-0000-0000-0000-000000000005');
@@ -49,10 +43,6 @@ insert into public.match_players (match_id, member_id) values ('33333333-0000-00
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000046','22222222-0000-0000-0000-000000000001');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000046','22222222-0000-0000-0000-000000000005');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000046','22222222-0000-0000-0000-000000000002');
-insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000045','11111111-1111-1111-1111-111111111111','monopoly','2026-05-10','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000045','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000045','22222222-0000-0000-0000-000000000008');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000045','22222222-0000-0000-0000-000000000003');
 insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000044','11111111-1111-1111-1111-111111111111','carcassonne','2026-05-08','22222222-0000-0000-0000-000000000006');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000044','22222222-0000-0000-0000-000000000006');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000044','22222222-0000-0000-0000-000000000004');
@@ -63,11 +53,6 @@ insert into public.match_players (match_id, member_id) values ('33333333-0000-00
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000043','22222222-0000-0000-0000-000000000003');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000043','22222222-0000-0000-0000-000000000007');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000043','22222222-0000-0000-0000-000000000002');
-insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000042','11111111-1111-1111-1111-111111111111','monopoly','2026-05-02','22222222-0000-0000-0000-000000000005');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000042','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000042','22222222-0000-0000-0000-000000000005');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000042','22222222-0000-0000-0000-000000000006');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000042','22222222-0000-0000-0000-000000000004');
 insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000041','11111111-1111-1111-1111-111111111111','carcassonne','2026-04-28','22222222-0000-0000-0000-000000000006');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000041','22222222-0000-0000-0000-000000000006');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000041','22222222-0000-0000-0000-000000000003');
@@ -78,10 +63,6 @@ insert into public.match_players (match_id, member_id) values ('33333333-0000-00
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000040','22222222-0000-0000-0000-000000000004');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000040','22222222-0000-0000-0000-000000000002');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000040','22222222-0000-0000-0000-000000000005');
-insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000039','11111111-1111-1111-1111-111111111111','monopoly','2026-04-22','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000039','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000039','22222222-0000-0000-0000-000000000008');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000039','22222222-0000-0000-0000-000000000004');
 insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000038','11111111-1111-1111-1111-111111111111','catan','2026-04-18','22222222-0000-0000-0000-000000000001');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000038','22222222-0000-0000-0000-000000000002');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000038','22222222-0000-0000-0000-000000000001');
@@ -91,11 +72,6 @@ insert into public.matches (id, group_id, game_id, played_on, winner_member_id) 
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000037','22222222-0000-0000-0000-000000000006');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000037','22222222-0000-0000-0000-000000000005');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000037','22222222-0000-0000-0000-000000000007');
-insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000036','11111111-1111-1111-1111-111111111111','monopoly','2026-04-11','22222222-0000-0000-0000-000000000008');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000036','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000036','22222222-0000-0000-0000-000000000002');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000036','22222222-0000-0000-0000-000000000008');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000036','22222222-0000-0000-0000-000000000004');
 insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000035','11111111-1111-1111-1111-111111111111','catan','2026-04-08','22222222-0000-0000-0000-000000000001');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000035','22222222-0000-0000-0000-000000000001');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000035','22222222-0000-0000-0000-000000000003');
@@ -105,11 +81,6 @@ insert into public.matches (id, group_id, game_id, played_on, winner_member_id) 
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000034','22222222-0000-0000-0000-000000000003');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000034','22222222-0000-0000-0000-000000000006');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000034','22222222-0000-0000-0000-000000000002');
-insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000033','11111111-1111-1111-1111-111111111111','monopoly','2026-04-01','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000033','22222222-0000-0000-0000-000000000005');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000033','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000033','22222222-0000-0000-0000-000000000008');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000033','22222222-0000-0000-0000-000000000004');
 insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000032','11111111-1111-1111-1111-111111111111','catan','2026-03-28','22222222-0000-0000-0000-000000000002');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000032','22222222-0000-0000-0000-000000000002');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000032','22222222-0000-0000-0000-000000000001');
@@ -124,11 +95,6 @@ insert into public.matches (id, group_id, game_id, played_on, winner_member_id) 
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000030','22222222-0000-0000-0000-000000000001');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000030','22222222-0000-0000-0000-000000000005');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000030','22222222-0000-0000-0000-000000000007');
-insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000029','11111111-1111-1111-1111-111111111111','monopoly','2026-03-18','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000029','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000029','22222222-0000-0000-0000-000000000004');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000029','22222222-0000-0000-0000-000000000008');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000029','22222222-0000-0000-0000-000000000002');
 insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000028','11111111-1111-1111-1111-111111111111','carcassonne','2026-03-14','22222222-0000-0000-0000-000000000003');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000028','22222222-0000-0000-0000-000000000003');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000028','22222222-0000-0000-0000-000000000001');
@@ -139,11 +105,6 @@ insert into public.match_players (match_id, member_id) values ('33333333-0000-00
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000027','22222222-0000-0000-0000-000000000002');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000027','22222222-0000-0000-0000-000000000008');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000027','22222222-0000-0000-0000-000000000005');
-insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000026','11111111-1111-1111-1111-111111111111','monopoly','2026-03-07','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000026','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000026','22222222-0000-0000-0000-000000000005');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000026','22222222-0000-0000-0000-000000000003');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000026','22222222-0000-0000-0000-000000000006');
 insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000025','11111111-1111-1111-1111-111111111111','carcassonne','2026-03-03','22222222-0000-0000-0000-000000000006');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000025','22222222-0000-0000-0000-000000000006');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000025','22222222-0000-0000-0000-000000000002');
@@ -153,10 +114,6 @@ insert into public.match_players (match_id, member_id) values ('33333333-0000-00
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000024','22222222-0000-0000-0000-000000000004');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000024','22222222-0000-0000-0000-000000000003');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000024','22222222-0000-0000-0000-000000000007');
-insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000023','11111111-1111-1111-1111-111111111111','monopoly','2026-02-22','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000023','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000023','22222222-0000-0000-0000-000000000008');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000023','22222222-0000-0000-0000-000000000005');
 insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000022','11111111-1111-1111-1111-111111111111','carcassonne','2026-02-18','22222222-0000-0000-0000-000000000003');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000022','22222222-0000-0000-0000-000000000006');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000022','22222222-0000-0000-0000-000000000003');
@@ -167,11 +124,6 @@ insert into public.match_players (match_id, member_id) values ('33333333-0000-00
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000021','22222222-0000-0000-0000-000000000001');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000021','22222222-0000-0000-0000-000000000005');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000021','22222222-0000-0000-0000-000000000004');
-insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000020','11111111-1111-1111-1111-111111111111','monopoly','2026-02-10','22222222-0000-0000-0000-000000000005');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000020','22222222-0000-0000-0000-000000000005');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000020','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000020','22222222-0000-0000-0000-000000000004');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000020','22222222-0000-0000-0000-000000000006');
 insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000019','11111111-1111-1111-1111-111111111111','carcassonne','2026-02-06','22222222-0000-0000-0000-000000000006');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000019','22222222-0000-0000-0000-000000000006');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000019','22222222-0000-0000-0000-000000000008');
@@ -181,10 +133,6 @@ insert into public.match_players (match_id, member_id) values ('33333333-0000-00
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000018','22222222-0000-0000-0000-000000000006');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000018','22222222-0000-0000-0000-000000000003');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000018','22222222-0000-0000-0000-000000000008');
-insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000017','11111111-1111-1111-1111-111111111111','monopoly','2026-01-28','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000017','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000017','22222222-0000-0000-0000-000000000002');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000017','22222222-0000-0000-0000-000000000004');
 insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000016','11111111-1111-1111-1111-111111111111','catan','2026-01-24','22222222-0000-0000-0000-000000000002');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000016','22222222-0000-0000-0000-000000000002');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000016','22222222-0000-0000-0000-000000000005');
@@ -200,11 +148,6 @@ insert into public.match_players (match_id, member_id) values ('33333333-0000-00
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000014','22222222-0000-0000-0000-000000000007');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000014','22222222-0000-0000-0000-000000000008');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000014','22222222-0000-0000-0000-000000000004');
-insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000013','11111111-1111-1111-1111-111111111111','monopoly','2026-01-12','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000013','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000013','22222222-0000-0000-0000-000000000005');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000013','22222222-0000-0000-0000-000000000006');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000013','22222222-0000-0000-0000-000000000008');
 insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000012','11111111-1111-1111-1111-111111111111','carcassonne','2026-01-08','22222222-0000-0000-0000-000000000006');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000012','22222222-0000-0000-0000-000000000006');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000012','22222222-0000-0000-0000-000000000001');
@@ -214,11 +157,6 @@ insert into public.match_players (match_id, member_id) values ('33333333-0000-00
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000011','22222222-0000-0000-0000-000000000003');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000011','22222222-0000-0000-0000-000000000005');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000011','22222222-0000-0000-0000-000000000007');
-insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000010','11111111-1111-1111-1111-111111111111','monopoly','2025-12-28','22222222-0000-0000-0000-000000000008');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000010','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000010','22222222-0000-0000-0000-000000000004');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000010','22222222-0000-0000-0000-000000000008');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000010','22222222-0000-0000-0000-000000000002');
 insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000009','11111111-1111-1111-1111-111111111111','carcassonne','2025-12-22','22222222-0000-0000-0000-000000000006');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000009','22222222-0000-0000-0000-000000000006');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000009','22222222-0000-0000-0000-000000000003');
@@ -228,10 +166,6 @@ insert into public.match_players (match_id, member_id) values ('33333333-0000-00
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000008','22222222-0000-0000-0000-000000000001');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000008','22222222-0000-0000-0000-000000000006');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000008','22222222-0000-0000-0000-000000000004');
-insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000007','11111111-1111-1111-1111-111111111111','monopoly','2025-12-14','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000007','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000007','22222222-0000-0000-0000-000000000005');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000007','22222222-0000-0000-0000-000000000003');
 insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000006','11111111-1111-1111-1111-111111111111','carcassonne','2025-12-10','22222222-0000-0000-0000-000000000006');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000006','22222222-0000-0000-0000-000000000003');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000006','22222222-0000-0000-0000-000000000006');
@@ -242,11 +176,6 @@ insert into public.match_players (match_id, member_id) values ('33333333-0000-00
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000005','22222222-0000-0000-0000-000000000002');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000005','22222222-0000-0000-0000-000000000005');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000005','22222222-0000-0000-0000-000000000008');
-insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000004','11111111-1111-1111-1111-111111111111','monopoly','2025-11-26','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000004','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000004','22222222-0000-0000-0000-000000000004');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000004','22222222-0000-0000-0000-000000000006');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000004','22222222-0000-0000-0000-000000000005');
 insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000003','11111111-1111-1111-1111-111111111111','catan','2025-11-19','22222222-0000-0000-0000-000000000001');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000003','22222222-0000-0000-0000-000000000001');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000003','22222222-0000-0000-0000-000000000002');
@@ -256,8 +185,3 @@ insert into public.matches (id, group_id, game_id, played_on, winner_member_id) 
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000002','22222222-0000-0000-0000-000000000006');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000002','22222222-0000-0000-0000-000000000005');
 insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000002','22222222-0000-0000-0000-000000000008');
-insert into public.matches (id, group_id, game_id, played_on, winner_member_id) values ('33333333-0000-0000-0000-000000000001','11111111-1111-1111-1111-111111111111','monopoly','2025-11-05','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000001','22222222-0000-0000-0000-000000000007');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000001','22222222-0000-0000-0000-000000000002');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000001','22222222-0000-0000-0000-000000000001');
-insert into public.match_players (match_id, member_id) values ('33333333-0000-0000-0000-000000000001','22222222-0000-0000-0000-000000000004');

@@ -31,6 +31,10 @@ body.font-display { font-family: 'Fraunces', 'Spectral', serif; }
   color: #f3ece0;
   border-bottom: 1px solid #3a2f23;
   box-shadow: 0 1px 0 rgba(255,235,200,.08) inset, 0 4px 18px rgba(0,0,0,.35);
+  /* Pin the topbar's typography so it does NOT inherit from the body's
+     active theme font. Keeps the nav identical across cafe/catan/carcassonne. */
+  font-family: 'Spectral', 'IBM Plex Serif', Georgia, serif;
+  font-size: 15px;
 }
 .topbar-inner {
   max-width: 1480px; margin: 0 auto; padding: 12px 24px;

@@ -12,7 +12,7 @@ import {
   type RealGameId,
 } from "@/data/data";
 
-const REAL_GAMES: RealGameId[] = ["catan", "carcassonne", "monopoly"];
+const REAL_GAMES: RealGameId[] = ["catan", "carcassonne"];
 
 // ─── Shared shell ──────────────────────────────────────────────────────────
 interface ModalShellProps {
@@ -166,7 +166,7 @@ export function PlayerProfileModal({
               <div
                 key={i}
                 className={`pp-form-cell ${r.won ? "pp-form-w" : "pp-form-l"}`}
-                title={`${r.won ? "Won" : "Lost"} ${GAMES[r.game_id].label} · ${fmtDate(r.played_on)}`}
+                title={`${r.won ? "Won" : "Lost"} ${GAMES[r.game_id]?.label ?? r.game_id} · ${fmtDate(r.played_on)}`}
               >
                 {r.won ? "W" : "L"}
               </div>
@@ -211,7 +211,7 @@ export function PlayerProfileModal({
                 className={"pp-recent-row " + (m.won ? "pp-won" : "pp-lost")}
               >
                 <span className="pp-recent-result">{m.won ? "W" : "L"}</span>
-                <span className="pp-recent-game">{GAMES[m.game_id].label}</span>
+                <span className="pp-recent-game">{GAMES[m.game_id]?.label ?? m.game_id}</span>
                 <span className="pp-recent-date">{fmtDate(m.played_on)}</span>
                 <span className="pp-recent-opps">
                   {m.opponent_member_ids
@@ -472,7 +472,7 @@ export function MatchHistoryModal({
       .map(k => ({ month: k, label: monthLabel(k), matches: groups[k] }));
   }, [filtered]);
 
-  const FILTERS: HistoryFilter[] = ["all", "catan", "carcassonne", "monopoly"];
+  const FILTERS: HistoryFilter[] = ["all", "catan", "carcassonne"];
 
   return (
     <ModalShell

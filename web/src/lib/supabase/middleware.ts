@@ -29,9 +29,23 @@ export async function updateSession(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user && request.nextUrl.pathname === '/') {
+  const { pathname, search } = request.nextUrl;
+  const isPublic =
+    pathname === '/signin' ||
+    pathname === '/signup' ||
+    pathname.startsWith('/auth/') ||
+    pathname.startsWith('/join/');
+
+  if (!user && !isPublic) {
     const url = request.nextUrl.clone();
     url.pathname = '/signin';
+    url.search = '';
+    // Round-trip: stash the original path+query as ?next= so signin/signup
+    // can redirect back after auth. safeNext() in /signin and /signup
+    // actions enforces the leading-slash guard.
+    if (pathname !== '/') {
+      url.searchParams.set('next', pathname + (search || ''));
+    }
     return NextResponse.redirect(url);
   }
 

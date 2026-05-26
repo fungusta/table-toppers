@@ -275,9 +275,13 @@ export type Database = {
     }
     Functions: {
       _gen_invite_code: { Args: never; Returns: string }
-      accept_invite: { Args: { p_code: string }; Returns: string }
+      _normalize_handle: { Args: { p_handle: string }; Returns: string }
+      accept_invite: {
+        Args: { p_code: string; p_handle?: string }
+        Returns: string
+      }
       create_group: {
-        Args: { p_ghosts?: Json; p_name: string }
+        Args: { p_color?: string; p_ghosts?: Json; p_handle?: string; p_name: string }
         Returns: string
       }
       create_invite: {
@@ -301,8 +305,6 @@ export type Database = {
           handle: string
           initials: string
           member_id: string
-          mono_played: number
-          mono_wins: number
           played: number
           streak: number
           win_rate: number

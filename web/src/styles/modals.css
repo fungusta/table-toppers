@@ -35,7 +35,6 @@
 .modal-theme-cafe .modal-card        { border-color: #5c4329; }
 .modal-theme-catan .modal-card       { border-color: #5c4329; background: #f4e6c8; }
 .modal-theme-carcassonne .modal-card { border-color: #5c4329; background: #f5e8c8; }
-.modal-theme-monopoly .modal-card    { border-color: #1c1410; }
 
 .modal-head {
   display: flex; justify-content: space-between; align-items: flex-start;
@@ -364,6 +363,15 @@
   padding-top: 12px;
   border-top: 1px solid rgba(28, 20, 16, .15);
 }
+.rm-error {
+  color: #8a2a1a;
+  background: rgba(138, 42, 26, .08);
+  border: 1px solid rgba(138, 42, 26, .25);
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-style: italic;
+}
 .rm-btn-primary {
   background: #1c1410;
   color: #faf3e0;
@@ -484,7 +492,6 @@
 }
 .mh-game[data-game="catan"] { background: #9c4b34; }
 .mh-game[data-game="carcassonne"] { background: #5b7a4a; }
-.mh-game[data-game="monopoly"] { background: #4a3d2e; }
 .mh-result {
   display: flex; align-items: center; gap: 6px;
   flex-wrap: wrap;

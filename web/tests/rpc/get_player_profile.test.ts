@@ -68,18 +68,17 @@ describe('get_player_profile RPC', () => {
     expect(p.hero).toEqual({ wins: 2, played: 6, streak: 2 });
   });
 
-  test('by_game has all three real games even when unplayed', async () => {
+  test('by_game has both real games even when unplayed', async () => {
     const { data } = await admin.rpc('get_player_profile', { p_member_id: ALICE });
     const byGame = (data as any).by_game as Array<{ game_id: string; wins: number; played: number }>;
-    expect(byGame.map(b => b.game_id).sort()).toEqual(['carcassonne', 'catan', 'monopoly']);
+    expect(byGame.map(b => b.game_id).sort()).toEqual(['carcassonne', 'catan']);
     const m = Object.fromEntries(byGame.map(b => [b.game_id, b]));
     expect(m.catan).toEqual({ game_id: 'catan', wins: 2, played: 4 });
     expect(m.carcassonne).toEqual({ game_id: 'carcassonne', wins: 0, played: 2 });
-    expect(m.monopoly).toEqual({ game_id: 'monopoly', wins: 0, played: 0 });
   });
 
   test('fav_game is most-played; ties resolve alphabetically', async () => {
-    // Alice: catan 4 > carcassonne 2 > monopoly 0 → catan.
+    // Alice: catan 4 > carcassonne 2 → catan.
     const { data } = await admin.rpc('get_player_profile', { p_member_id: ALICE });
     expect((data as any).fav_game).toBe('catan');
   });

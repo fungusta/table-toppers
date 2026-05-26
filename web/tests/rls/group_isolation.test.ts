@@ -41,11 +41,6 @@ async function provisionUserInIsolatedGroup(suffix: string): Promise<Provisioned
   if (e1 || !created.user) throw e1 ?? new Error('createUser returned no user');
   const userId = created.user.id;
 
-  // The handle_new_user trigger auto-joined this user to the seed group;
-  // rip those rows out so we can put them in an isolated group.
-  await admin.from('group_members').delete().eq('user_id', userId);
-  await admin.from('members').delete().eq('user_id', userId);
-
   const groupId = randomUUID();
   const { error: e2 } = await admin.from('groups').insert({ id: groupId, name: `iso-${suffix}-${Date.now()}` });
   if (e2) throw e2;

@@ -4,7 +4,7 @@
 // components (Cafe / Catan / Carcassonne) keep working against live data
 // fetched from Supabase, transformed into the same Match[] / Player[] shape.
 
-export type GameId = "cafe" | "catan" | "carcassonne" | "monopoly";
+export type GameId = "cafe" | "catan" | "carcassonne";
 export type RealGameId = Exclude<GameId, "cafe">;
 export type Range = "week" | "month" | "all";
 
@@ -100,10 +100,9 @@ export const GAMES: Record<GameId, GameMeta> = {
   cafe:        { id: "cafe",        label: "All Games",   short: "All"   },
   catan:       { id: "catan",       label: "Catan",       short: "Catan" },
   carcassonne: { id: "carcassonne", label: "Carcassonne", short: "Carc." },
-  monopoly:    { id: "monopoly",    label: "Monopoly",    short: "Mono." },
 };
 
-const REAL_GAMES: RealGameId[] = ["catan", "carcassonne", "monopoly"];
+const REAL_GAMES: RealGameId[] = ["catan", "carcassonne"];
 
 // Range cutoff uses the most recent match's date as the "now" anchor, so the
 // slice behaves correctly against historical seed data (newest match: 2026-05-22)
@@ -142,8 +141,8 @@ export function computeStandings(
       member_id: p.id,
       player: p,
       wins: 0, played: 0, winRate: 0, streak: 0,
-      byGame:       { catan: 0, carcassonne: 0, monopoly: 0 },
-      playedByGame: { catan: 0, carcassonne: 0, monopoly: 0 },
+      byGame:       { catan: 0, carcassonne: 0 },
+      playedByGame: { catan: 0, carcassonne: 0 },
       fav: "catan",
     };
   }

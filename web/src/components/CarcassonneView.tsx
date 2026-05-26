@@ -139,31 +139,40 @@ export function CarcassonneView({
             <span className="carc-section-title">Recent Tournaments</span>
             <CarcDivider flip />
           </div>
-          <ul className="carc-recent">
-            {recent.map(m => {
-              const w = playerById(players, m.winner);
-              return (
-                <li key={m.id} className="carc-recent-row" onClick={() => onPickPlayer(w.id)}>
-                  <div className="carc-recent-body">
-                    <div className="carc-recent-title">
-                      <CarcMeeple color={w.color} size={18} />
-                      <span>
-                        <strong>{w.name}</strong> closed the city · {fmtDateLong(m.date)}
-                      </span>
+          {recent.length === 0 ? (
+            <div className="carc-recent carc-recent-empty">
+              <div className="carc-recent-empty-title">No tournaments yet</div>
+              <div className="carc-recent-empty-sub">
+                Lay the first tile to open this chapter of the chronicle.
+              </div>
+            </div>
+          ) : (
+            <ul className="carc-recent">
+              {recent.map(m => {
+                const w = playerById(players, m.winner);
+                return (
+                  <li key={m.id} className="carc-recent-row" onClick={() => onPickPlayer(w.id)}>
+                    <div className="carc-recent-body">
+                      <div className="carc-recent-title">
+                        <CarcMeeple color={w.color} size={18} />
+                        <span>
+                          <strong>{w.name}</strong> closed the city · {fmtDateLong(m.date)}
+                        </span>
+                      </div>
+                      <div className="carc-recent-sub">
+                        together with{" "}
+                        {m.players
+                          .filter(p => p !== m.winner)
+                          .map(p => playerById(players, p).name)
+                          .join(", ")}
+                      </div>
                     </div>
-                    <div className="carc-recent-sub">
-                      together with{" "}
-                      {m.players
-                        .filter(p => p !== m.winner)
-                        .map(p => playerById(players, p).name)
-                        .join(", ")}
-                    </div>
-                  </div>
-                  <div className="carc-recent-date">{relTime(m.date)}</div>
-                </li>
-              );
-            })}
-          </ul>
+                    <div className="carc-recent-date">{relTime(m.date)}</div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
           <div className="carc-actions">
             <button className="carc-btn carc-btn-primary" onClick={onRecord}>
               ✦ Record new tournament
