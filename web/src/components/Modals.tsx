@@ -4,11 +4,11 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   fmtDate,
   GAMES,
-  headToHead,
   playerById,
   type GameId,
   type Match,
   type Player,
+  type PlayerProfilePayload,
   type RealGameId,
 } from "@/data/data";
 
@@ -47,53 +47,68 @@ function ModalShell({ open, onClose, theme, size = "md", children, title, subtit
 interface PlayerProfileModalProps {
   playerId: string | null;
   players: Player[];
-  matches: Match[];
+  profile: PlayerProfilePayload | null;
+  loading: boolean;
+  error: string | null;
   onClose: () => void;
   theme: GameId;
   onPickPlayer: (id: string) => void;
 }
 
-export function PlayerProfileModal({ playerId, players, matches, onClose, theme, onPickPlayer }: PlayerProfileModalProps) {
+function ProfileSkeleton() {
+  return (
+    <div className="pp-grid pp-skeleton" aria-busy="true">
+      <div className="pp-hero">
+        <div className="pp-avatar" style={{ background: 'rgba(255,255,255,0.08)' }} />
+        <div className="pp-hero-stats">
+          {[0, 1, 2, 3].map(i => (
+            <div key={i} className="pp-hstat">
+              <span style={{ visibility: 'hidden' }}>00</span>
+              <i style={{ visibility: 'hidden' }}>placeholder</i>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="pp-section"><h4>Loading…</h4></div>
+    </div>
+  );
+}
+
+export function PlayerProfileModal({
+  playerId, players, profile, loading, error, onClose, theme, onPickPlayer,
+}: PlayerProfileModalProps) {
   const open = !!playerId;
-  const player: Player | null = open ? playerById(players, playerId!) : null;
+  if (!open) return null;
 
-  const data = useMemo(() => {
-    if (!player) return null;
-    const all = matches.filter(m => m.players.includes(player.id));
-    const wins = all.filter(m => m.winner === player.id);
-    const byGame: Record<RealGameId, number> = { catan: 0, carcassonne: 0, monopoly: 0 };
-    const playedByGame: Record<RealGameId, number> = { catan: 0, carcassonne: 0, monopoly: 0 };
-    for (const m of all) {
-      playedByGame[m.game]++;
-      if (m.winner === player.id) byGame[m.game]++;
-    }
-    const fav = REAL_GAMES.reduce<RealGameId>(
-      (a, b) => (playedByGame[a] >= playedByGame[b] ? a : b),
-      "catan"
+  // Loading + error states share the shell.
+  if (!profile || loading) {
+    return (
+      <ModalShell
+        open={open}
+        onClose={onClose}
+        theme={theme}
+        size="lg"
+        title="Player record"
+      >
+        {error
+          ? <div className="pp-empty">Couldn't load profile: {error}</div>
+          : <ProfileSkeleton />}
+      </ModalShell>
     );
+  }
 
-    const ordered = [...all].sort((a, b) => b.date.localeCompare(a.date));
-    let streak = 0;
-    for (const m of ordered) {
-      if (m.winner === player.id) streak++;
-      else break;
-    }
+  const player = players.find(p => p.id === profile.member.id);
+  if (!player) {
+    return (
+      <ModalShell open={open} onClose={onClose} theme={theme} size="lg" title="Player record">
+        <div className="pp-empty">Player not in current roster.</div>
+      </ModalShell>
+    );
+  }
 
-    const last10 = ordered.slice(0, 10).map(m => ({
-      won: m.winner === player.id,
-      game: m.game,
-      date: m.date,
-    }));
-
-    const h2h = players.filter(p => p.id !== player.id)
-      .map(other => ({ other, ...headToHead(matches, player.id, other.id) }))
-      .filter(r => r.played > 0)
-      .sort((a, b) => b.played - a.played);
-
-    return { all, wins, byGame, playedByGame, fav, streak, last10, h2h, recent: ordered.slice(0, 8) };
-  }, [player, players, matches]);
-
-  if (!open || !player || !data) return null;
+  const winRate = profile.hero.played > 0
+    ? Math.round((profile.hero.wins / profile.hero.played) * 100)
+    : 0;
 
   return (
     <ModalShell
@@ -110,13 +125,10 @@ export function PlayerProfileModal({ playerId, players, matches, onClose, theme,
             {player.initials}
           </div>
           <div className="pp-hero-stats">
-            <div className="pp-hstat"><span>{data.wins.length}</span><i>total wins</i></div>
-            <div className="pp-hstat"><span>{data.all.length}</span><i>games played</i></div>
-            <div className="pp-hstat">
-              <span>{Math.round((data.wins.length / Math.max(data.all.length, 1)) * 100)}%</span>
-              <i>win rate</i>
-            </div>
-            <div className="pp-hstat"><span>{data.streak}</span><i>current streak</i></div>
+            <div className="pp-hstat"><span>{profile.hero.wins}</span><i>total wins</i></div>
+            <div className="pp-hstat"><span>{profile.hero.played}</span><i>games played</i></div>
+            <div className="pp-hstat"><span>{winRate}%</span><i>win rate</i></div>
+            <div className="pp-hstat"><span>{profile.hero.streak}</span><i>current streak</i></div>
           </div>
         </div>
 
@@ -124,14 +136,15 @@ export function PlayerProfileModal({ playerId, players, matches, onClose, theme,
           <h4>Wins by game</h4>
           <div className="pp-bygame">
             {REAL_GAMES.map(g => {
-              const w = data.byGame[g];
-              const p = data.playedByGame[g];
+              const row = profile.by_game.find(b => b.game_id === g);
+              const w = row?.wins ?? 0;
+              const p = row?.played ?? 0;
               const pct = p ? (w / p) * 100 : 0;
               return (
                 <div key={g} className="pp-bygame-row">
                   <div className="pp-bygame-name">
                     {GAMES[g].label}
-                    {data.fav === g && <span className="pp-fav">★ favorite</span>}
+                    {profile.fav_game === g && <span className="pp-fav">★ favorite</span>}
                   </div>
                   <div className="pp-bygame-bar">
                     <div
@@ -149,57 +162,62 @@ export function PlayerProfileModal({ playerId, players, matches, onClose, theme,
         <div className="pp-section">
           <h4>Recent form (last 10)</h4>
           <div className="pp-form">
-            {data.last10.map((r, i) => (
+            {profile.last_10.map((r, i) => (
               <div
                 key={i}
                 className={`pp-form-cell ${r.won ? "pp-form-w" : "pp-form-l"}`}
-                title={`${r.won ? "Won" : "Lost"} ${GAMES[r.game].label} · ${fmtDate(r.date)}`}
+                title={`${r.won ? "Won" : "Lost"} ${GAMES[r.game_id].label} · ${fmtDate(r.played_on)}`}
               >
                 {r.won ? "W" : "L"}
               </div>
             ))}
-            {data.last10.length === 0 && <div className="pp-empty">No games yet</div>}
+            {profile.last_10.length === 0 && <div className="pp-empty">No games yet</div>}
           </div>
         </div>
 
         <div className="pp-section pp-section-h2h">
           <h4>Head to head</h4>
           <div className="pp-h2h">
-            {data.h2h.map(r => {
-              const total = r.aWins + r.bWins;
-              const aPct = total ? (r.aWins / total) * 100 : 50;
+            {profile.head_to_head.map(r => {
+              const other = players.find(p => p.id === r.opponent_member_id);
+              if (!other) return null;
+              const total = r.a_wins + r.b_wins;
+              const aPct = total ? (r.a_wins / total) * 100 : 50;
               return (
-                <div key={r.other.id} className="pp-h2h-row" onClick={() => onPickPlayer(r.other.id)}>
-                  <div className="pp-h2h-name">vs {r.other.name}</div>
+                <div key={r.opponent_member_id} className="pp-h2h-row" onClick={() => onPickPlayer(r.opponent_member_id)}>
+                  <div className="pp-h2h-name">vs {other.name}</div>
                   <div className="pp-h2h-bar">
                     <div className="pp-h2h-a" style={{ width: `${aPct}%`, background: player.color }}>
-                      <span>{r.aWins}</span>
+                      <span>{r.a_wins}</span>
                     </div>
-                    <div className="pp-h2h-b" style={{ background: r.other.color }}>
-                      <span>{r.bWins}</span>
+                    <div className="pp-h2h-b" style={{ background: other.color }}>
+                      <span>{r.b_wins}</span>
                     </div>
                   </div>
                   <div className="pp-h2h-total">{r.played} total</div>
                 </div>
               );
             })}
-            {data.h2h.length === 0 && <div className="pp-empty">No shared matches</div>}
+            {profile.head_to_head.length === 0 && <div className="pp-empty">No shared matches</div>}
           </div>
         </div>
 
         <div className="pp-section pp-section-recent">
           <h4>Recent matches</h4>
           <ul className="pp-recent">
-            {data.recent.map(m => (
+            {profile.recent.map(m => (
               <li
-                key={m.id}
-                className={"pp-recent-row " + (m.winner === player.id ? "pp-won" : "pp-lost")}
+                key={m.match_id}
+                className={"pp-recent-row " + (m.won ? "pp-won" : "pp-lost")}
               >
-                <span className="pp-recent-result">{m.winner === player.id ? "W" : "L"}</span>
-                <span className="pp-recent-game">{GAMES[m.game].label}</span>
-                <span className="pp-recent-date">{fmtDate(m.date)}</span>
+                <span className="pp-recent-result">{m.won ? "W" : "L"}</span>
+                <span className="pp-recent-game">{GAMES[m.game_id].label}</span>
+                <span className="pp-recent-date">{fmtDate(m.played_on)}</span>
                 <span className="pp-recent-opps">
-                  {m.players.filter(p => p !== player.id).map(p => playerById(players, p).name).join(", ")}
+                  {m.opponent_member_ids
+                    .map(oid => players.find(p => p.id === oid)?.name)
+                    .filter(Boolean)
+                    .join(", ")}
                 </span>
               </li>
             ))}
@@ -224,7 +242,15 @@ interface RecordMatchModalProps {
   theme: GameId;
   defaultGame: GameId;
   players: Player[];
-  onSubmit: (match: NewMatch) => void;
+  onSubmit: (match: NewMatch) => Promise<{ ok: true } | { ok: false; error: string }>;
+}
+
+function todayIso(): string {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
 }
 
 function hexFade(hex: string, alpha: number): string {
@@ -243,16 +269,20 @@ export function RecordMatchModal({ open, onClose, theme, onSubmit, defaultGame, 
   const [game, setGame] = useState<RealGameId>(initialGame(defaultGame));
   const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
   const [winner, setWinner] = useState<string | null>(null);
-  const [date, setDate] = useState<string>("2026-05-23");
+  const [date, setDate] = useState<string>(todayIso());
   const [step, setStep] = useState<0 | 1>(0);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     if (open) {
       setGame(initialGame(defaultGame));
       setSelectedPlayers([]);
       setWinner(null);
-      setDate("2026-05-23");
+      setDate(todayIso());
       setStep(0);
+      setSubmitting(false);
+      setSubmitError(null);
     }
   }, [open, defaultGame]);
 
@@ -265,11 +295,18 @@ export function RecordMatchModal({ open, onClose, theme, onSubmit, defaultGame, 
     }
   }
 
-  const canSubmit = selectedPlayers.length >= 2 && !!winner && !!date && !!game;
+  const canSubmit = selectedPlayers.length >= 2 && !!winner && !!date && !!game && !submitting;
 
-  function submit() {
+  async function submit() {
     if (!canSubmit || !winner) return;
-    onSubmit({ game, players: selectedPlayers, winner, date });
+    setSubmitting(true);
+    setSubmitError(null);
+    const result = await onSubmit({ game, players: selectedPlayers, winner, date });
+    if (!result.ok) {
+      setSubmitError(result.error);
+      setSubmitting(false);
+      return;
+    }
     setStep(1);
     setTimeout(() => onClose(), 1400);
   }
@@ -316,7 +353,7 @@ export function RecordMatchModal({ open, onClose, theme, onSubmit, defaultGame, 
               className="rm-input"
               value={date}
               onChange={e => setDate(e.target.value)}
-              max="2026-05-23"
+              max={todayIso()}
             />
           </div>
 
@@ -362,10 +399,12 @@ export function RecordMatchModal({ open, onClose, theme, onSubmit, defaultGame, 
             </div>
           )}
 
+          {submitError && <div className="rm-error" role="alert">{submitError}</div>}
+
           <div className="rm-actions">
-            <button className="rm-btn-secondary" onClick={onClose}>Cancel</button>
+            <button className="rm-btn-secondary" onClick={onClose} disabled={submitting}>Cancel</button>
             <button className="rm-btn-primary" disabled={!canSubmit} onClick={submit}>
-              Record match
+              {submitting ? 'Recording…' : 'Record match'}
             </button>
           </div>
         </div>
