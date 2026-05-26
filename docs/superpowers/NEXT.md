@@ -4,61 +4,16 @@ Living priority list for Table Topper after the Supabase vertical slice landed (
 
 Each top-level item is sized as its own spec → plan → implementation cycle. Order is roughly the suggested sequence, but they're loosely independent and can be reshuffled.
 
----
+**Recently shipped** (no longer in this list):
 
-## 1. Write path — recording matches for real
-
-**Status:** UI exists (`RecordMatchModal`), state is local-only and disappears on page reload.
-
-**What this spec needs to deliver:**
-- Server Action (`recordMatch`) that inserts a `matches` row + N `match_players` rows in a single transaction (Postgres function with `security definer` if RLS-insert turns out to be awkward across two tables).
-- Write-side RLS policies: `matches_insert` and `match_players_insert` gated on `is_group_member(group_id)`.
-- `players` array in the modal restricted to members of the signed-in user's group (already true with current data shape).
-- Optimistic update + revalidation: either `revalidatePath('/')` after submit, or hand back the new row and prepend in client state.
-- Replace `crypto.randomUUID()` placeholder in `HomeClient.handleRecord` with the real server-assigned id.
-- Update the spec's hardcoded date in `get_standings` (see item 4) so newly recorded matches aren't silently filtered out of "all time".
-
-**Touches:** `web/src/components/HomeClient.tsx`, `web/src/components/Modals.tsx` (submit handler), new `web/src/app/actions/record-match.ts`, new migration `0004_match_write_rls.sql`.
-
-**Tests:**
-- Layer 1: vitest integration that records a match via the action, asserts row in DB.
-- Layer 2: RLS test — userA cannot insert a match into userB's group.
-- Layer 3: Playwright extension of `signup_and_view.spec.ts` to click Record, fill, submit, see new row.
+- **Player profile real stats.** `get_player_profile(p_member_id uuid) returns jsonb` in migration `0007_get_player_profile.sql` (`security invoker`; RLS on `members`/`matches`/`match_players` does the authorization). `PlayerProfileModal` is now a payload-driven renderer with loading skeleton + error tile; `HomeClient` lazy-loads via `supabase.rpc('get_player_profile', ...)` with an `AbortController` keyed on `profileId` so rapid head-to-head clicks don't render stale data. Always all-time / pan-game; range and game-aware variants deferred (non-breaking to add later). Layer-1 coverage in `web/tests/rpc/get_player_profile.test.ts` (8 cases: shape, hero, by-game with zero-play games, fav tie-break, last-10 ordering, streak, h2h, recent), Layer-2 in `web/tests/rls/group_isolation.test.ts` (cross-group returns null + own-group returns non-null). The `headToHead` helper in `web/src/data/data.ts` is now unused — listed for removal under Smaller cleanups.
+- **Group creation + invites.** `invites` table + four security-definer RPCs in migration `0006_groups_invites.sql` (`create_group`, `create_invite`, `peek_invite`, `accept_invite`). New routes `/groups/new`, `/g/[group_id]/`, `/g/[group_id]/manage`, `/join/[code]`. `?next=` round-trip through `/signin` and `/signup` (with leading-slash open-redirect guard). Middleware now allowlists `/join/*`. `TopBar` gains a `GroupSwitcher` dropdown. Invite codes are 8-char Crockford base32, single-use, 7-day TTL. Layer-1 (`web/tests/rpc/groups_invites.test.ts`), Layer-2 (invite visibility cases + bearer-token semantics in `web/tests/rls/group_isolation.test.ts`), Layer-3 (`web/tests/e2e/groups_invites.spec.ts`) all cover the flow. The `handle_new_user` seed-group auto-join trigger is unchanged in dev; stripping it in production stays bundled with item 3 (Production deployment).
+- **Write path — recording matches for real.** `record_match` RPC (`security definer`, atomic two-table insert, group-membership-checked) lives in migration `0004_match_writes.sql`; `recordMatch` server action at `web/src/app/actions/record-match.ts` wraps it; `HomeClient.handleRecord` is async and uses the DB-assigned id; `RecordMatchModal` defaults to today and surfaces server errors. Layer-1 RPC test (`web/tests/rpc/record_match.test.ts`) and Layer-2 RLS test (cross-group write block in `web/tests/rls/group_isolation.test.ts`) cover it. Layer-3 Playwright extension is still pending.
+- **`get_standings` date anchor.** Migration `0005_get_standings_anchor.sql` replaces the hardcoded `2026-05-23` with `coalesce(max(played_on), current_date)` per group (option C), matching the TS `rangeCutoff` helper.
 
 ---
 
-## 2. `get_standings` date anchor
-
-**Status:** RPC hardcodes `v_today := date '2026-05-23'` to match the seed data's newest match. This will silently break the "week" / "month" range filters as time advances past late June 2026.
-
-**Fix paths (pick one in its spec):**
-- **A.** Switch to `current_date`. Requires reseeding with current dates (or accepting that `range='week'` returns empty on seed data because all matches are old).
-- **B.** Accept an optional `p_today date default current_date` parameter so callers can override for tests / demos.
-- **C.** Compute the anchor inside the RPC as `select max(played_on) from matches where group_id = p_group_id` and offset from that.
-
-Recommend **C**: matches the TS-side helper `rangeCutoff(matches, range)` in `web/src/data/data.ts`, so the SQL and TS computations agree.
-
-**Touches:** `supabase/migrations/0005_get_standings_anchor.sql` (new migration replacing the function body), `web/tests/rpc/get_standings.test.ts` (update expected fixture-derived values).
-
----
-
-## 3. Group creation + invites
-
-**Status:** Schema is multi-group from day one; every signup auto-joins "The Sunday Strategists". There's no UI for creating a fresh group or joining an existing one.
-
-**What this spec needs:**
-- `groups_insert` RLS policy: any authenticated user may create a group.
-- `group_members_insert` RLS: only group owners can add new members.
-- `invites` table: `(group_id, code text unique, created_by, expires_at, used_by, used_at)`.
-- Routes: `/groups/new` (create), `/groups/[id]` (manage / invite), `/join?code=...` (accept invite, requires sign-in).
-- Modify `handle_new_user` trigger: stop auto-joining the seed group (or gate on a `?from_invite=...` query). The seed group becomes the dev fixture, not the default landing for new users.
-- `HomeClient` / `TopBar`: group switcher dropdown when user has >1 group.
-
-**Touches:** new migration, new routes under `web/src/app/groups/` and `web/src/app/join/`, new modal or page for invite generation, `TopBar.tsx` for group switcher.
-
----
-
-## 4. Per-game curated stats (spec differentiator)
+## 1. Per-game curated stats (spec differentiator)
 
 **Status:** `CatanView` and `CarcassonneView` currently render the same generic shape as `CafeView` filtered to one game. The product differentiator (per the spec at `docs/superpowers/specs/...`) was supposed to be game-specific stats — longest road wins for Catan, completed cities for Carcassonne, etc.
 
@@ -72,15 +27,7 @@ This is the largest of the remaining specs and worth decomposing further (one ga
 
 ---
 
-## 5. Player profile real stats
-
-**Status:** `PlayerProfileModal` works against the matches array currently in client state, which means it shows correct numbers for the seed data but won't include matches recorded by other users in real time.
-
-**After item 1 ships:** add `revalidatePath('/')` (or realtime, see item 8) so the profile sees fresh data. Optional refactor: move the profile's stat computations into a `get_player_profile(member_id)` RPC to centralize logic between TS and SQL.
-
----
-
-## 6. Production deployment
+## 2. Production deployment
 
 **Status:** Stack runs entirely locally. No hosted Supabase project, no Vercel project, no production env vars.
 
@@ -88,13 +35,13 @@ This is the largest of the remaining specs and worth decomposing further (one ga
 - Hosted Supabase project; `supabase db push` applies migrations.
 - Vercel project linked to GitHub; env vars (`NEXT_PUBLIC_SUPABASE_URL`, anon key) wired in Vercel dashboard.
 - `supabase/config.toml` production override for `enable_confirmations = true` + custom SMTP (Resend) for email delivery.
-- A `production` migration that seeds the games table but **not** the dev-only "Sunday Strategists" group (depends on item 3 to remove the auto-join trigger first).
+- A `production` migration that seeds the games table but **not** the dev-only "Sunday Strategists" group, and strips the `handle_new_user` auto-join trigger added in `0003_handle_new_user.sql`.
 - Password reset and email verification flows (currently disabled in dev).
-- CI: GitHub Actions running `npm run build` + the full test matrix from item 7's CI sketch in the slice plan.
+- CI: GitHub Actions running `npm run build` + the full test matrix from item 5's CI sketch in the slice plan.
 
 ---
 
-## 7. iOS client (SwiftUI)
+## 3. iOS client (SwiftUI)
 
 **Status:** `ios/` does not exist. CLAUDE.md still lists it as planned.
 
@@ -108,9 +55,9 @@ This is its own multi-spec track and shouldn't block web progress.
 
 ---
 
-## 8. Realtime updates
+## 4. Realtime updates
 
-**Status:** Once writes land (item 1), users on the same group will only see new matches after they navigate or refresh.
+**Status:** Writes land in the DB now, but users on the same group only see new matches after they navigate or refresh.
 
 **Spec:** Subscribe via Supabase Realtime to `matches` filtered to `group_id`. On insert, either invalidate the server-rendered page (`router.refresh()`) or hot-patch the `matches` array in `HomeClient` state. The latter is faster but skips RLS re-evaluation; the former is the safer default.
 
@@ -118,10 +65,12 @@ This is its own multi-spec track and shouldn't block web progress.
 
 ## Smaller cleanups (don't need their own spec)
 
+- **Layer-3 Playwright coverage for record-match.** Extend `signup_and_view.spec.ts` (or add a sibling spec) to click Record, fill the modal, submit, and assert the new row in the History modal / standings table. Skipped during the write-path slice because the e2e harness wasn't loaded.
+- **Unused `headToHead` export in `web/src/data/data.ts`.** Replaced by the SQL-side head-to-head computation in `get_player_profile`. Safe to remove along with the `H2H` interface.
 - **`vitest.config.ts` `as any` cast.** Drop once Vitest's `InlineConfig` type exposes `poolOptions` properly, or migrate the `poolOptions` shape to whatever Vitest 4 actually accepts.
-- **`db:types` script.** Currently runs `supabase gen types typescript --local > src/...`. After item 6 lands, add a separate script for the hosted project so deploys keep types fresh.
+- **`db:types` script.** Currently runs `supabase gen types typescript --local > src/...`. After item 4 lands, add a separate script for the hosted project so deploys keep types fresh.
 - **Match `id` shape.** Widened from `number` to `string` for Supabase UUIDs. If you ever want stable ordering of matches by id (none of the current code does), introduce a `seq bigserial` column.
-- **Legacy `useEffect` body-class toggling in `HomeClient`.** Works but causes a flash on first paint because the server renders with `theme-cafe` baked in by `layout.tsx`. Move the body class to a server-derived `data-theme` attribute on `<html>` once we wire the URL searchparams back in (item 4 likely touches this).
+- **Legacy `useEffect` body-class toggling in `HomeClient`.** Works but causes a flash on first paint because the server renders with `theme-cafe` baked in by `layout.tsx`. Move the body class to a server-derived `data-theme` attribute on `<html>` once we wire the URL searchparams back in.
 - **`docs/superpowers/plans/2026-05-24-supabase-vertical-slice.md`** still describes the slim CafeViewClient. Either annotate it with a "see commit 359f92b for restoration" pointer or fold the restoration into the plan history. Optional; not load-bearing.
 
 ---

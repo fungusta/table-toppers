@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project status
 
-`web/` (Next.js 15 App Router, React 18, TypeScript) runs against a local Supabase stack (`supabase/` migrations + seed) with email/password auth and a single read-only leaderboard at `/` wired to live data via the `get_standings` Postgres RPC. RLS gates all reads off `group_members`. Tests live under `web/tests/` via Vitest (unit + RPC + RLS integration) and Playwright (signup→leaderboard e2e). No `ios/` yet. Lint config is still `next lint` defaults.
+`web/` (Next.js 15 App Router, React 18, TypeScript) runs against a local Supabase stack (`supabase/` migrations + seed) with email/password auth and a leaderboard wired to live data via the `get_standings` Postgres RPC. RLS gates reads off `group_members`. Match recording is live via the `record_match` RPC + a `recordMatch` server action (atomic two-table insert, group-membership-checked). Group creation + invites are live: any signed-in user can create a group via `/groups/new`, owners generate single-use Crockford-base32 invite codes from `/g/[group_id]/manage`, joiners accept via `/join/[code]`. Leaderboard route restructured from `/` to `/g/[group_id]/`; `/` is now a thin redirector to the user's most recent group (or `/groups/new`). Migration `0006_groups_invites.sql` adds the `invites` table plus `create_group` / `create_invite` / `peek_invite` / `accept_invite` RPCs. `TopBar` has a group switcher for users in multiple groups. `PlayerProfileModal` now renders from a `get_player_profile` RPC (migration `0007_get_player_profile.sql`, `security invoker`, returns a single JSONB blob) rather than client-state matches, with `HomeClient` lazy-loading the payload via `supabase.rpc()` + `AbortController` keyed on `profileId`. Tests live under `web/tests/` via Vitest (unit + RPC + RLS integration including write isolation, invite visibility, and player-profile cross-group isolation) and Playwright (signup→leaderboard e2e + create-invite-accept flow). No `ios/` yet. Lint config is still `next lint` defaults.
 
-The slice deliberately omits write paths (recording matches), per-game curated pages, invites, and multi-group UI — these are future specs. See `docs/superpowers/specs/2026-05-24-supabase-vertical-slice-design.md` for what was built and why.
+The slice still omits per-game curated pages — that's the next spec (see `docs/superpowers/NEXT.md`). See `docs/superpowers/specs/2026-05-24-supabase-vertical-slice-design.md` and `docs/superpowers/specs/2026-05-25-groups-invites-design.md` for the design baselines.
 
 React is pinned to 18 (not 19) deliberately; do not upgrade without a reason.
 
@@ -61,15 +61,17 @@ Two clients, one backend. Both clients talk directly to Supabase; server-side lo
 
 Actual:
 - `web/` — Next.js 15 App Router, React 18, TypeScript
-  - `src/app/` — routes: `layout.tsx`, `page.tsx` (server-rendered leaderboard), `signin/`, `signup/`, `auth/signout/`
-  - `src/components/CafeViewClient.tsx` — the only React component in the slice; receives `standings` + `members` via props
+  - `src/app/` — routes: `layout.tsx`, `page.tsx` (redirector to `/g/[default]/`), `g/[group_id]/page.tsx` (server-rendered leaderboard), `g/[group_id]/manage/page.tsx` (owner-only invite management), `groups/new/page.tsx` (create-group form), `join/[code]/page.tsx` (accept invite), `signin/`, `signup/`, `auth/signout/`
+  - `src/components/{HomeClient,CafeView,CatanView,CarcassonneView,TopBar,Modals,CreateGroupForm,InviteManager,AcceptInviteCard}.tsx` — `HomeClient` orchestrates state, `*View` components render per-tab leaderboards, `Modals` hosts Record/History/PlayerProfile, `TopBar` includes a `GroupSwitcher` dropdown, `CreateGroupForm` / `InviteManager` / `AcceptInviteCard` are client islands for the new group/invite flows
   - `src/data/data.ts` — types and pure formatters only (mock constants + standings logic moved to Supabase)
   - `src/lib/supabase/{server,client,middleware}.ts` — `@supabase/ssr` factories; `database.types.ts` is generated
-  - `middleware.ts` — refreshes Supabase session cookie and gates `/`
-  - `src/styles/` — plain CSS (`base.css`, `cafe.css`); legacy `modals.css`/`carcassonne.css`/`catan.css` survive for future revival
+  - `src/lib/next-redirect.ts` — `safeNext()` helper that guards `?next=` against open-redirects
+  - `middleware.ts` — refreshes Supabase session cookie; gates everything except `/signin`, `/signup`, `/auth/*`, `/join/*`; passes original path as `?next=` for round-tripping after auth
+  - `src/app/actions/{record-match,create-group,create-invite,accept-invite}.ts` — server actions wrapping the corresponding RPCs
+  - `src/styles/` — plain CSS (`base.css`, `cafe.css`, `catan.css`, `carcassonne.css`, `modals.css`)
   - `tests/{unit,rpc,rls,e2e}/` — Vitest + Playwright suites
 - `supabase/` — Supabase CLI workspace
-  - `migrations/0001_init.sql` (schema + RLS), `0002_get_standings.sql` (RPC), `0003_handle_new_user.sql` (signup trigger)
+  - `migrations/0001_init.sql` (schema + RLS), `0002_get_standings.sql` (RPC), `0003_handle_new_user.sql` (signup trigger), `0004_match_writes.sql` (record_match RPC + insert RLS), `0005_get_standings_anchor.sql` (data-driven date anchor), `0006_groups_invites.sql` (invites table + create_group / create_invite / peek_invite / accept_invite RPCs), `0007_get_player_profile.sql` (player profile RPC)
   - `seed.sql` — "The Sunday Strategists" + 8 members + 51 matches
   - `tests/seed_known.sql` — deterministic fixture loaded by RPC tests
   - `config.toml` — local-dev config (email confirmation disabled)
@@ -77,7 +79,7 @@ Actual:
 - `docs/superpowers/{specs,plans}/` — design spec + implementation plan for the slice
 - `.design/board-game-leaderboard/` — design handoff bundle (see above)
 
-Legacy components (`CatanView`, `CarcassonneView`, `Modals`, `TopBar`) were removed during the slice because they consumed mock data that no longer exists. They live in git history (`git log --all -- web/src/components/`) and as prototypes in `.design/board-game-leaderboard/project/` — revive in future specs.
+The `CatanView` and `CarcassonneView` tabs currently render the same generic shape as `CafeView` filtered to one game; their per-game curated stat treatment is still upcoming work (see `docs/superpowers/NEXT.md` item 4). Their visual prototypes live under `.design/board-game-leaderboard/project/`.
 
 Planned but not yet present:
 - `ios/` — SwiftUI Xcode project
