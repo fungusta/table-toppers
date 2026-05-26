@@ -102,6 +102,47 @@ export type Database = {
         }
         Relationships: []
       }
+      invites: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string | null
+          expires_at: string
+          group_id: string
+          id: string
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by?: string | null
+          expires_at: string
+          group_id: string
+          id?: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string
+          group_id?: string
+          id?: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invites_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       match_players: {
         Row: {
           match_id: string
@@ -233,6 +274,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _gen_invite_code: { Args: never; Returns: string }
+      accept_invite: { Args: { p_code: string }; Returns: string }
+      create_group: {
+        Args: { p_ghosts?: Json; p_name: string }
+        Returns: string
+      }
+      create_invite: {
+        Args: { p_group_id: string; p_ttl_hours?: number }
+        Returns: {
+          code: string
+          expires_at: string
+        }[]
+      }
+      get_player_profile: { Args: { p_member_id: string }; Returns: Json }
       get_standings: {
         Args: { p_game: string; p_group_id: string; p_range: string }
         Returns: {
@@ -255,6 +310,26 @@ export type Database = {
         }[]
       }
       is_group_member: { Args: { g: string }; Returns: boolean }
+      is_group_owner: { Args: { g: string }; Returns: boolean }
+      peek_invite: {
+        Args: { p_code: string }
+        Returns: {
+          expires_at: string
+          group_id: string
+          group_name: string
+          used: boolean
+        }[]
+      }
+      record_match: {
+        Args: {
+          p_game_id: string
+          p_group_id: string
+          p_member_ids: string[]
+          p_played_on: string
+          p_winner_member_id: string
+        }
+        Returns: string
+      }
       streak_for: {
         Args: {
           p_cutoff: string

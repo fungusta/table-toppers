@@ -49,6 +49,53 @@ export interface H2H {
   played: number;
 }
 
+export interface PlayerProfileMember {
+  id: string;
+  group_id: string;
+  display_name: string;
+  handle: string | null;
+  color: string;
+  initials: string;
+  joined_at: string;
+}
+
+export interface PlayerProfileByGame {
+  game_id: RealGameId;
+  wins: number;
+  played: number;
+}
+
+export interface PlayerProfileLast10Entry {
+  won: boolean;
+  game_id: RealGameId;
+  played_on: string;
+}
+
+export interface PlayerProfileH2H {
+  opponent_member_id: string;
+  a_wins: number;
+  b_wins: number;
+  played: number;
+}
+
+export interface PlayerProfileRecentMatch {
+  match_id: string;
+  game_id: RealGameId;
+  played_on: string;
+  won: boolean;
+  opponent_member_ids: string[];
+}
+
+export interface PlayerProfilePayload {
+  member: PlayerProfileMember;
+  hero: { wins: number; played: number; streak: number };
+  by_game: PlayerProfileByGame[];
+  fav_game: RealGameId;
+  last_10: PlayerProfileLast10Entry[];
+  head_to_head: PlayerProfileH2H[];
+  recent: PlayerProfileRecentMatch[];
+}
+
 export const GAMES: Record<GameId, GameMeta> = {
   cafe:        { id: "cafe",        label: "All Games",   short: "All"   },
   catan:       { id: "catan",       label: "Catan",       short: "Catan" },
