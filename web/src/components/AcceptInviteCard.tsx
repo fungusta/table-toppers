@@ -9,7 +9,6 @@ const HANDLE_PATTERN = /^[a-z0-9][a-z0-9_-]{1,23}$/;
 function humanize(code: string): string {
   switch (code) {
     case 'invite_not_found':  return 'Invite not found.';
-    case 'invite_used':       return 'This invite has already been used.';
     case 'invite_expired':    return 'This invite has expired.';
     case 'not_authenticated': return 'Sign in to accept this invite.';
     case 'handle_invalid':

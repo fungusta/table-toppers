@@ -31,7 +31,7 @@ export default async function ManagePage({
   const [{ data: invites }, { data: members }] = await Promise.all([
     supabase
       .from("invites")
-      .select("id, code, created_at, expires_at, used_at, used_by")
+      .select("id, code, created_at, expires_at")
       .eq("group_id", group_id)
       .order("created_at", { ascending: false }),
     supabase

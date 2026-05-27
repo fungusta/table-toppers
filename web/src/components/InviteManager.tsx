@@ -8,8 +8,6 @@ export interface InviteRow {
   code: string;
   created_at: string;
   expires_at: string;
-  used_at: string | null;
-  used_by: string | null;
 }
 
 function uuid(): string {
@@ -45,15 +43,14 @@ export function InviteManager({
         code: result.code,
         created_at: new Date().toISOString(),
         expires_at: result.expiresAt,
-        used_at: null,
-        used_by: null,
       },
       ...prev,
     ]);
   }
 
   function copyLink(code: string) {
-    const url = `${window.location.origin}/join/${code}`;
+    const base = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '') ?? window.location.origin;
+    const url = `${base}/join/${code}`;
     navigator.clipboard.writeText(url);
     setCopied(code);
     setTimeout(() => setCopied(c => (c === code ? null : c)), 1500);
@@ -68,11 +65,8 @@ export function InviteManager({
       ) : (
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
           {invites.map(i => {
-            const status = i.used_at
-              ? 'used'
-              : new Date(i.expires_at).getTime() <= Date.now()
-                ? 'expired'
-                : 'active';
+            const expired = new Date(i.expires_at).getTime() <= Date.now();
+            const status = expired ? 'expired' : 'active';
             return (
               <li
                 key={i.id}

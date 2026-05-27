@@ -5,7 +5,6 @@ import { createClient } from '@/lib/supabase/server';
 
 const SENTINELS = [
   'invite_not_found',
-  'invite_used',
   'invite_expired',
   'already_member',
   'handle_invalid',

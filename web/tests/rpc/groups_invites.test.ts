@@ -205,9 +205,8 @@ describe('peek_invite', () => {
     const code = (invRows as unknown as { code: string }[])[0].code;
 
     const { data: peek } = await owner.client.rpc('peek_invite', { p_code: code });
-    const peekRow = (peek as unknown as { group_name: string; used: boolean }[])[0];
+    const peekRow = (peek as unknown as { group_name: string }[])[0];
     expect(peekRow.group_name).toBe('Peekable');
-    expect(peekRow.used).toBe(false);
 
     await admin
       .from('invites')
@@ -235,7 +234,7 @@ describe('accept_invite', () => {
     return { owner, groupId: gid as string, code };
   }
 
-  test('happy: joiner gets group_members + members rows; invite marked used', async () => {
+  test('happy: joiner gets group_members + members rows (multi-use, since 0013)', async () => {
     const { groupId, code } = await setupInvite('ok');
     const joiner = await signUpUser('ai-ok-j');
 
@@ -252,24 +251,27 @@ describe('accept_invite', () => {
       .eq('user_id', joiner.id)
       .single();
     expect(gm?.role).toBe('member');
-
-    const { data: usedInvite } = await admin
-      .from('invites')
-      .select('used_by, used_at')
-      .eq('code', code)
-      .single();
-    expect(usedInvite?.used_by).toBe(joiner.id);
-    expect(usedInvite?.used_at).not.toBeNull();
   });
 
-  test('rejects already-used code', async () => {
-    const { code } = await setupInvite('used');
-    const j1 = await signUpUser('ai-used-j1');
-    await j1.client.rpc('accept_invite', { p_code: code });
+  test('multi-use: a second joiner can redeem the same code (since 0013)', async () => {
+    const { groupId, code } = await setupInvite('multi');
+    const j1 = await signUpUser('ai-multi-j1');
+    const j2 = await signUpUser('ai-multi-j2');
 
-    const j2 = await signUpUser('ai-used-j2');
-    const { error } = await j2.client.rpc('accept_invite', { p_code: code });
-    expect(error?.message ?? '').toMatch(/invite_used/);
+    const r1 = await j1.client.rpc('accept_invite', { p_code: code });
+    expect(r1.error).toBeNull();
+    expect(r1.data).toBe(groupId);
+
+    const r2 = await j2.client.rpc('accept_invite', { p_code: code });
+    expect(r2.error).toBeNull();
+    expect(r2.data).toBe(groupId);
+
+    const { count } = await admin
+      .from('group_members')
+      .select('*', { count: 'exact', head: true })
+      .eq('group_id', groupId)
+      .in('user_id', [j1.id, j2.id]);
+    expect(count).toBe(2);
   });
 
   test('rejects expired code', async () => {

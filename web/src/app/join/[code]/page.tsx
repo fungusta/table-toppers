@@ -29,25 +29,14 @@ export default async function JoinPage({
     );
   }
 
-  type PeekRow = { group_id: string; group_name: string; expires_at: string; used: boolean };
+  type PeekRow = { group_id: string; group_name: string; expires_at: string };
   const row = (Array.isArray(data) ? data[0] : data) as unknown as PeekRow;
-
-  if (row.used) {
-    return (
-      <main style={{ maxWidth: 480, margin: "4rem auto", fontFamily: "system-ui", padding: "0 1rem" }}>
-        <h1>Invite already used</h1>
-        <p>Ask the group owner for a new one.</p>
-        <p><a href="/">Back to your groups</a></p>
-      </main>
-    );
-  }
 
   return (
     <main style={{ maxWidth: 480, margin: "4rem auto", fontFamily: "system-ui", padding: "0 1rem" }}>
       <h1>Join {row.group_name}?</h1>
       <p style={{ color: "#666" }}>
-        Accepting will add you as a member of this group. The invite will be
-        consumed.
+        Accepting will add you as a member of this group.
       </p>
       <AcceptInviteCard code={code} groupId={row.group_id} />
     </main>
