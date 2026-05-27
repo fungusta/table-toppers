@@ -37,11 +37,11 @@ export async function acceptInvite(input: AcceptInviteInput): Promise<AcceptInvi
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'not_authenticated' };
 
-  const handle = input.handle?.trim() || null;
+  const handle = input.handle?.trim() || undefined;
 
   const { data, error } = await supabase.rpc('accept_invite', {
     p_code: input.code,
-    p_handle: handle,
+    ...(handle ? { p_handle: handle } : {}),
   });
   if (error) {
     const matched = SENTINELS.find(s => error.message.includes(s));
